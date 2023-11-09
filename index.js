@@ -3,33 +3,41 @@ const cors = require("cors");
 const path = require("path");
 const bodyparser = require("body-parser");
 const app = express();
+const dotenv = require("dotenv");
+
+// Routes dan middleware lainnya
+const userRoute = require("./routes/userRoute");
+const authRoute = require("./routes/authRoute");
+const permohonanRoute = require("./routes/permohonanRoute");
+const cekagamaRoute = require("./routes/cekagamaRoute");
+const agamaRoute = require("./routes/agamaRoute");
+const persetujuanRoute = require("./routes/admin/persetujuanRoute");
+const periodeRoute = require("./routes/admin/periodeRoute");
+
 global.__basedir = __dirname;
 
+dotenv.config();
+
+const PORT = process.env.PORT;
 // Mengizinkan akses dari semua origin
 app.use(cors());
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
-// Routes dan middleware lainnya
-const users_routes = require("./routes/userRoute");
-const auth_routes = require("./routes/authRoute");
-const permohonan_routes = require("./routes/permohonanRoute");
-const cekagama_routes = require("./routes/cekagamaRoute");
-const agamas_routes = require("./routes/agamaRoute");
-const persetujuan_routes = require("./routes/admin/persetujuanRoute");
-const periode_routes = require("./routes/admin/periodeRoute");
+app.get("/", (req, res) => {
+    res.json({ msg: "Selamat Datang di HIBAHKU API v1 ..." });
+});
 
-app.use("/api", users_routes);
-app.use("/api", auth_routes);
-app.use("/api", permohonan_routes);
-app.use("/api", cekagama_routes);
-app.use("/api", agamas_routes);
-app.use("/api", persetujuan_routes);
-app.use("/api", periode_routes);
+app.use("/api", userRoute);
+app.use("/api", authRoute);
+app.use("/api", permohonanRoute);
+app.use("/api", cekagamaRoute);
+app.use("/api", agamaRoute);
+app.use("/api", persetujuanRoute);
+app.use("/api", periodeRoute);
 
 // Start your server
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.listen(PORT, () => {
+    console.log(`Listening on http://localhost:${PORT}`);
 });

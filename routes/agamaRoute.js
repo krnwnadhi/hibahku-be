@@ -1,15 +1,11 @@
 const express = require("express");
-const agamasroute = express.Router();
-const agamas_controller = require("../controllers/agamaController");
+const agamaController = require("../controllers/agamaController");
 const verifyToken = require("../middleware/verifyToken");
-const { checkrole } = require("../middleware/roleCheck");
+const { roleCheck } = require("../middleware/roleCheck");
 
-agamasroute.post("/keagamaans", verifyToken, agamas_controller.registagama);
-agamasroute.get(
-  "/keagamaans",
-  verifyToken,
-  checkrole,
-  agamas_controller.agamas
-);
+const agamaRoute = express.Router();
 
-module.exports = agamasroute;
+agamaRoute.post("/keagamaans", verifyToken, agamaController.registagama);
+agamaRoute.get("/keagamaans", verifyToken, roleCheck, agamaController.agamas);
+
+module.exports = agamaRoute;

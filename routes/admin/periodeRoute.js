@@ -1,14 +1,15 @@
 const express = require("express");
-const perioderoute = express.Router();
-const periode_controller = require("../../controllers/admin/periodeController");
-const auth = require("../../middleware/verifyToken");
-const { checkrole } = require("../../middleware/roleCheck");
+const periodeController = require("../../controllers/admin/periodeController");
+const verifyToken = require("../../middleware/verifyToken");
+const { roleCheck } = require("../../middleware/roleCheck");
 
-perioderoute.post(
-  "/periodes",
-  auth,
-  checkrole,
-  periode_controller.verifyPeriode
+const periodeRoute = express.Router();
+
+periodeRoute.post(
+    "/periodes",
+    verifyToken,
+    roleCheck,
+    periodeController.verifyPeriode
 );
 
-module.exports = perioderoute;
+module.exports = periodeRoute;

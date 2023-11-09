@@ -1,35 +1,37 @@
 const express = require("express");
-const persetujuanroute = express.Router();
-const persetujuan_controller = require("../../controllers/admin/persetujuanController");
-const auth = require("../../middleware/verifyToken");
-const { checkrole } = require("../../middleware/roleCheck");
 
-persetujuanroute.post(
-  "/persetujuan/:id",
-  auth,
-  checkrole,
-  persetujuan_controller.persetujuan
+const persetujuanController = require("../../controllers/admin/persetujuanController");
+const verifyToken = require("../../middleware/verifyToken");
+const { roleCheck } = require("../../middleware/roleCheck");
+
+const persetujuanRoute = express.Router();
+
+persetujuanRoute.post(
+    "/persetujuan/:id",
+    verifyToken,
+    roleCheck,
+    persetujuanController.persetujuan
 );
 
-persetujuanroute.delete(
-  "/persetujuan/:id",
-  auth,
-  checkrole,
-  persetujuan_controller.hapuspermohonan
+persetujuanRoute.delete(
+    "/persetujuan/:id",
+    verifyToken,
+    roleCheck,
+    persetujuanController.hapuspermohonan
 );
 
-persetujuanroute.get(
-  "/persetujuan/:id",
-  auth,
-  checkrole,
-  persetujuan_controller.detailpermohonan
+persetujuanRoute.get(
+    "/persetujuan/:id",
+    verifyToken,
+    roleCheck,
+    persetujuanController.detailpermohonan
 );
 
-persetujuanroute.get(
-  "/download/:fileName",
-  auth,
-  checkrole,
-  persetujuan_controller.downloadfile
+persetujuanRoute.get(
+    "/download/:fileName",
+    verifyToken,
+    roleCheck,
+    persetujuanController.downloadfile
 );
 
-module.exports = persetujuanroute;
+module.exports = persetujuanRoute;
