@@ -1,34 +1,27 @@
 const express = require("express");
 
-const persetujuanController = require("../../controllers/admin/persetujuanController");
-const verifyToken = require("../../middleware/verifyToken");
-const { roleCheck } = require("../../middleware/roleCheck");
+const persetujuanController = require("../controllers/persetujuanController");
+const verifyToken = require("../middleware/verifyToken");
+const { roleCheck } = require("../middleware/roleCheck");
 
 const persetujuanRoute = express.Router();
 
 persetujuanRoute.get(
     "/list",
     verifyToken,
-    roleCheck
-    // persetujuanController.allPersetujuan
+    roleCheck,
+    persetujuanController.allPersetujuan
 );
 
 persetujuanRoute.post(
-    "/persetujuan/:id",
+    "/approve/:id",
     verifyToken,
     roleCheck,
     persetujuanController.createPersetujuan
 );
 
-persetujuanRoute.delete(
-    "/persetujuan/:id",
-    verifyToken,
-    roleCheck,
-    persetujuanController.hapusPersetujuan
-);
-
 persetujuanRoute.get(
-    "/persetujuan/:id",
+    "/detail/:id",
     verifyToken,
     roleCheck,
     persetujuanController.detailPersetujuan
@@ -39,6 +32,13 @@ persetujuanRoute.get(
     verifyToken,
     roleCheck,
     persetujuanController.downloadfile
+);
+
+persetujuanRoute.delete(
+    "/:id",
+    verifyToken,
+    roleCheck,
+    persetujuanController.hapusPersetujuan
 );
 
 module.exports = persetujuanRoute;

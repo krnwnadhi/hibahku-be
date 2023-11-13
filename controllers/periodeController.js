@@ -1,4 +1,4 @@
-const { Periode } = require("../../models");
+const { Periode } = require("../models");
 
 const isValidDate = (dateString) => {
     const regEx = /^\d{4}-\d{2}-\d{2}$/;

@@ -1,15 +1,12 @@
 const { Keagamaan, Permohonan } = require("../models");
 
-const cekagama = async (req, res) => {
-    // const { body } = req;
+const cekStatus = async (req, res) => {
     const { id } = req?.body;
 
     try {
-        // const { id } = body;
+        const rumahIbadahExists = await Keagamaan.findByPk(id);
 
-        const agamaExists = await Keagamaan.findByPk(id);
-
-        if (agamaExists) {
+        if (rumahIbadahExists) {
             const lastSubmission = await Permohonan.findOne({
                 where: {
                     Keagamaanid: id,
@@ -45,12 +42,12 @@ const cekagama = async (req, res) => {
             return res.status(404).send("Data agama tidak ditemukan");
         }
     } catch (error) {
-        return res
-            .status(500)
-            .send("Terjadi kesalahan dalam memproses permintaan");
+        return res.status(500).json({
+            msg: `Terjadi kesalahan dalam memproses permintaan. ${error.message} `,
+        });
     }
 };
 
 module.exports = {
-    cekagama,
+    cekStatus,
 };

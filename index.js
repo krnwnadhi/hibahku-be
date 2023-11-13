@@ -10,10 +10,10 @@ const dotenv = require("dotenv");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
 const rumahIbadahRoute = require("./routes/rumahIbadahRoute");
-const cekagamaRoute = require("./routes/cekagamaRoute");
+const cekStatusRumahIbadahRoute = require("./routes/cekStatusRumahIbadahRoute");
 const permohonanRoute = require("./routes/permohonanRoute");
-const persetujuanRoute = require("./routes/admin/persetujuanRoute");
-const periodeRoute = require("./routes/admin/periodeRoute");
+const persetujuanRoute = require("./routes/persetujuanRoute");
+const periodeRoute = require("./routes/periodeRoute");
 
 global.__basedir = __dirname;
 
@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/users", userRoute);
-app.use("/api/v1/cek-status", cekagamaRoute);
+app.use("/api/v1/cek-status", cekStatusRumahIbadahRoute);
 app.use("/api/v1/rumah-ibadah", rumahIbadahRoute);
 app.use("/api/v1/permohonan", permohonanRoute);
 app.use("/api/v1/persetujuan", persetujuanRoute);
