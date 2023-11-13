@@ -12,7 +12,8 @@ const secretKey = process.env.SECRET_KEY;
 const register = async (req, res) => {
     const securePassword = async (password) => {
         try {
-            const passwordHash = await bcryptjs.hash(password, 10);
+            const salt = await bcryptjs.genSalt(10);
+            const passwordHash = await bcryptjs.hash(password, salt);
             return passwordHash;
         } catch (error) {
             throw new Error("Failed to hash the password");
@@ -50,11 +51,11 @@ const register = async (req, res) => {
         ) {
             return res.status(400).json({
                 success: false,
-                msg: "Harap mengisi form yang kosong",
+                msg: "Harap mengisi form yang kosong!",
             });
         }
 
-        const spassword = await securePassword(req.body.password);
+        const spassword = await securePassword(req?.body?.password);
 
         const existingUser = await User.findOne({
             where: { nik: nik }, // Use the parsed 'nik' for lookup
@@ -77,12 +78,12 @@ const register = async (req, res) => {
         });
 
         //save user to database
-        const user_data = await user.save();
+        const newUser = await user.save();
 
         return res.status(201).json({
             success: true,
             msg: "Register berhasil",
-            data: user_data,
+            data: newUser,
         });
     } catch (error) {
         return res.status(500).json({ success: false, msg: error.message });

@@ -1,6 +1,6 @@
 const { User, Role } = require("../models");
 
-const getusers = async (req, res) => {
+const getUsers = async (req, res) => {
     try {
         const users = await User.findAll({
             include: [
@@ -15,13 +15,13 @@ const getusers = async (req, res) => {
         if (users.length === 0) {
             return res.status(404).json({
                 success: false,
-                msg: "No users found.",
+                msg: "Belum ada user",
             });
         }
 
         return res.status(200).json({
             success: true,
-            msg: "Users ditemukan",
+            msg: "User ditemukan",
             data: users,
         });
     } catch (error) {
@@ -60,5 +60,5 @@ const getUsersById = async (req, res) => {
 
 module.exports = {
     getUsersById,
-    getusers,
+    getUsers,
 };

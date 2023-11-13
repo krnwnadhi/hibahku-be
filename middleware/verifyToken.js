@@ -17,10 +17,10 @@ const verifyToken = async (req, res, next) => {
         });
     }
 
-    const JWTToken = token.split(" ").pop();
+    const jwtToken = token.split(" ").pop();
 
     try {
-        const data = jwt.verify(JWTToken, secretKey);
+        const data = jwt.verify(jwtToken, secretKey);
 
         const user = await User.findByPk(data.userId); // Ensure correct user identifier
 
@@ -35,7 +35,7 @@ const verifyToken = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         return res.status(401).json({
-            message: "Unauthorized",
+            message: "Not Authorized!",
         });
     }
 };
