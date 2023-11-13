@@ -3,6 +3,6 @@ const cekagamaRoute = express.Router(); // Use express.Router() to define a rout
 const cekagamaController = require("../controllers/cekagamaController");
 const verifyToken = require("../middleware/verifyToken");
 
-cekagamaRoute.post("/cekagamas", verifyToken, cekagamaController.cekagama);
+cekagamaRoute.post("/", verifyToken, cekagamaController.cekagama);
 
 module.exports = cekagamaRoute;

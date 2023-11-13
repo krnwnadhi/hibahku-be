@@ -42,7 +42,7 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype !== "application/pdf") {
-        req.pdfUploadError = "Only PDF files are allowed";
+        req.pdfUploadError = "Hanya bisa upload file PDF";
         cb(null, false);
     } else {
         cb(null, true);
@@ -68,7 +68,7 @@ const upload = multer({
 
 // Setting up the route to handle POST requests
 permohonanRoute.post(
-    "/permohonans",
+    "/uploads",
     upload,
     // async (req, res, next) => {
     //   if (req.pdfUploadError) {

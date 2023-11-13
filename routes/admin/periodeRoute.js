@@ -5,11 +5,6 @@ const { roleCheck } = require("../../middleware/roleCheck");
 
 const periodeRoute = express.Router();
 
-periodeRoute.post(
-    "/periodes",
-    verifyToken,
-    roleCheck,
-    periodeController.verifyPeriode
-);
+periodeRoute.post("/", verifyToken, roleCheck, periodeController.verifyPeriode);
 
 module.exports = periodeRoute;

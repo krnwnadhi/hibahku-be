@@ -1,7 +1,12 @@
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
-const config = require("../config/config.json");
-const secretKey = config.development.secretKey;
+// const config = require("../config/config.json");
+// const secretKey = config.development.secretKey;
+
+const dotenv = require("dotenv");
+dotenv.config();
+
+const secretKey = process.env.SECRET_KEY;
 
 const verifyToken = async (req, res, next) => {
     const token = req?.headers?.authorization;

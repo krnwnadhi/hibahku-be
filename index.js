@@ -3,6 +3,7 @@ const cors = require("cors");
 const path = require("path");
 const bodyparser = require("body-parser");
 const app = express();
+
 const dotenv = require("dotenv");
 
 // Routes dan middleware lainnya
@@ -29,13 +30,13 @@ app.get("/", (req, res) => {
     res.json({ msg: "Selamat Datang di HIBAHKU API v1 ..." });
 });
 
-app.use("/api", userRoute);
-app.use("/api", authRoute);
-app.use("/api", permohonanRoute);
-app.use("/api", cekagamaRoute);
-app.use("/api", agamaRoute);
-app.use("/api", persetujuanRoute);
-app.use("/api", periodeRoute);
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/users", userRoute);
+app.use("/api/v1/permohonan", permohonanRoute);
+app.use("/api/v1/cek-status", cekagamaRoute);
+app.use("/api/v1/rumah-ibadah", agamaRoute);
+app.use("/api/v1/persetujuan", persetujuanRoute);
+app.use("/api/v1/periode", periodeRoute);
 
 // Start your server
 app.listen(PORT, () => {

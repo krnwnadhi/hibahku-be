@@ -1,8 +1,93 @@
 const { User } = require("../models");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const config = require("../config/config.json");
-const secretKey = config.development.secretKey;
+// const config = require("../config/config.json");
+// const secretKey = config.development.secretKey;
+
+const dotenv = require("dotenv");
+dotenv.config();
+
+const secretKey = process.env.SECRET_KEY;
+
+const register = async (req, res) => {
+    const securePassword = async (password) => {
+        try {
+            const passwordHash = await bcryptjs.hash(password, 10);
+            return passwordHash;
+        } catch (error) {
+            throw new Error("Failed to hash the password");
+        }
+    };
+
+    try {
+        const nik = parseInt(req?.body?.nik, 10); // Parse the input to an integer
+
+        if (isNaN(nik)) {
+            return res.status(400).json({
+                success: false,
+                msg: "NIK harus angka.",
+            });
+        } else {
+            const nikStr = nik.toString(); // Convert it back to a string
+            if (nikStr.length < 16) {
+                return res.status(400).json({
+                    success: false,
+                    msg: "NIK terlalu pendek. Minimal 16 angka.",
+                });
+            } else if (nikStr.length > 16) {
+                return res.status(400).json({
+                    success: false,
+                    msg: "NIK terlalu panjang. Maksimal 16 Angka",
+                });
+            }
+        }
+
+        if (
+            !req.body.nik ||
+            !req.body.nama ||
+            !req.body.notelpon ||
+            !req.body.password
+        ) {
+            return res.status(400).json({
+                success: false,
+                msg: "Harap mengisi form yang kosong",
+            });
+        }
+
+        const spassword = await securePassword(req.body.password);
+
+        const existingUser = await User.findOne({
+            where: { nik: nik }, // Use the parsed 'nik' for lookup
+        });
+
+        if (existingUser) {
+            return res
+                .status(409)
+                .json({ success: false, msg: "NIK Sudah digunakan." });
+        }
+
+        // Create a new User instance with id equal to nik
+        const user = new User({
+            id: nik, // Set id to the parsed 'nik' value
+            nama: req?.body?.nama,
+            nik: nik, // Set nik to the parsed 'nik' value
+            notelpon: req?.body?.notelpon,
+            password: spassword,
+            roleid: 2, // Set roleid to 2 (or as required)
+        });
+
+        //save user to database
+        const user_data = await user.save();
+
+        return res.status(201).json({
+            success: true,
+            msg: "Register berhasil",
+            data: user_data,
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, msg: error.message });
+    }
+};
 
 const login = async (req, res) => {
     const { nik, password } = req.body;
@@ -30,19 +115,30 @@ const login = async (req, res) => {
 
         // User is authenticated, generate a JWT token
         const token = jwt.sign({ userId: user.id, nik: user.nik }, secretKey, {
-            expiresIn: "1h", // Token expiration time
+            expiresIn: "24h", // 24 Jam Token Kadaluarsa
         });
 
         if (user.roleid === 1) {
-            return res.status(200).json({ token, msg: "Admin login berhasil" });
+            return res.status(200).json({
+                token,
+                role: user?.roleid,
+                msg: "Admin login berhasil",
+            });
         } else if (user.roleid === 2) {
-            return res.status(200).json({ token, msg: "User login berhasil" });
+            return res.status(200).json({
+                token,
+                role: user?.roleid,
+                msg: "User login berhasil",
+            });
         } else {
-            return res.status(200).json({ token, msg: "Login berhasil" });
+            return res
+                .status(200)
+                .json({ token, role: user?.roleid, msg: "Login berhasil" });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Internal Server Error" });
+        // res.status(500).json({ msg: "Internal Server Error" });
+        return res.status(500).json({ success: false, msg: error.message });
     }
 };
 
@@ -51,4 +147,4 @@ const logout = (req, res) => {
     res.status(200).json({ msg: "Logout successful" });
 };
 
-module.exports = { login, logout };
+module.exports = { register, login, logout };

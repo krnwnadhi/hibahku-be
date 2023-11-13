@@ -6,25 +6,32 @@ const { roleCheck } = require("../../middleware/roleCheck");
 
 const persetujuanRoute = express.Router();
 
+persetujuanRoute.get(
+    "/list",
+    verifyToken,
+    roleCheck
+    // persetujuanController.allPersetujuan
+);
+
 persetujuanRoute.post(
     "/persetujuan/:id",
     verifyToken,
     roleCheck,
-    persetujuanController.persetujuan
+    persetujuanController.createPersetujuan
 );
 
 persetujuanRoute.delete(
     "/persetujuan/:id",
     verifyToken,
     roleCheck,
-    persetujuanController.hapuspermohonan
+    persetujuanController.hapusPersetujuan
 );
 
 persetujuanRoute.get(
     "/persetujuan/:id",
     verifyToken,
     roleCheck,
-    persetujuanController.detailpermohonan
+    persetujuanController.detailPersetujuan
 );
 
 persetujuanRoute.get(

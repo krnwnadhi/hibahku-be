@@ -4,7 +4,12 @@ const userController = require("../controllers/userController");
 const verifyToken = require("../middleware/verifyToken");
 const { roleCheck } = require("../middleware/roleCheck");
 
-userRoute.post("/users", userController.register);
-userRoute.get("/users", verifyToken, roleCheck, userController.getusers);
+userRoute.get("/getusers", verifyToken, roleCheck, userController.getusers);
+userRoute.get(
+    "/getusers/:id",
+    verifyToken,
+    roleCheck,
+    userController.getUsersById
+);
 
 module.exports = userRoute;

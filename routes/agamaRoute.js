@@ -5,7 +5,7 @@ const { roleCheck } = require("../middleware/roleCheck");
 
 const agamaRoute = express.Router();
 
-agamaRoute.post("/keagamaans", verifyToken, agamaController.registagama);
-agamaRoute.get("/keagamaans", verifyToken, roleCheck, agamaController.agamas);
+agamaRoute.get("/list", verifyToken, roleCheck, agamaController.agamas);
+agamaRoute.post("/", verifyToken, agamaController.registagama);
 
 module.exports = agamaRoute;
