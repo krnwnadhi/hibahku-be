@@ -1,4 +1,6 @@
+const { Op } = require("sequelize");
 const { Keagamaan, Kategori } = require("../models");
+
 // const { Sequelize } = require("sequelize");
 
 const createRumahIbadah = async (req, res) => {
@@ -49,40 +51,46 @@ const createRumahIbadah = async (req, res) => {
 };
 
 const listRumahIbadah = async (req, res) => {
+    const page = parseInt(req?.query?.page) || 0;
+    const limit = parseInt(req?.query?.limit) || 10;
+    const search = req?.query?.nama || "";
+
+    const offset = limit * page;
+
+    const totalRows = await Keagamaan.count({
+        where: {
+            nama: {
+                [Op.like]: `%${search}%`,
+            },
+        },
+    });
+
+    const totalPage = Math.ceil(totalRows / limit);
+
     try {
-        const page = req?.query?.page ? parseInt(req.query.page) : 1; // Mendapatkan nomor halaman dari query parameter
-        const limit = req?.query?.limit ? parseInt(req.query.limit) : 10; // Mendapatkan batas data per halaman dari query parameter
-
-        const offset = (page - 1) * limit; // Menghitung offset data
-
-        const allRumahIbadah = await Keagamaan.findAndCountAll({
+        const data = await Keagamaan.findAll({
+            where: {
+                nama: {
+                    [Op.like]: `%${search}%`,
+                },
+            },
             include: [
-                { model: Kategori, as: "Kategori", attributes: ["nama"] },
+                { model: Kategori, as: "Kategori", attributes: ["id", "nama"] },
             ],
-            limit,
-            offset,
+            offset: offset,
+            limit: limit,
+            order: [["createdAt", "DESC"]],
         });
 
-        const dataRumahIbadah = allRumahIbadah.rows.map((keagamaan) => ({
-            id: keagamaan.id,
-            nama: keagamaan.nama,
-            alamat: keagamaan.alamat,
-            wilayah: keagamaan.wilayah,
-            kategori: {
-                id: keagamaan.kategoriid,
-                nama: keagamaan.Kategori.nama,
-            },
-        }));
-
-        if (allRumahIbadah.count === 0) {
-            return res
-                .status(200)
-                .json({ success: true, data: "Data rumah ibadah tidak ada" });
-        }
-
-        return res
-            .status(200)
-            .json({ success: true, data: dataRumahIbadah, limit, offset });
+        res.json({
+            success: true,
+            data: data,
+            page: page + 1,
+            limit: limit,
+            totalItems: totalRows,
+            totalPage: totalPage,
+            hasMore: data.length >= limit ? true : false,
+        });
     } catch (error) {
         return res.status(500).json({
             success: false,
