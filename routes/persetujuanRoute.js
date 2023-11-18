@@ -17,7 +17,7 @@ persetujuanRoute.post(
     "/approve/:id",
     verifyToken,
     roleCheck,
-    persetujuanController.createPersetujuan
+    persetujuanController.approvePersetujuan
 );
 
 persetujuanRoute.get(

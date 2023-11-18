@@ -20,7 +20,7 @@ const path = require("path");
 const fs = require("fs"); // Module untuk menghapus file
 
 // APPROVAL MERUBAH STATUS
-const createPersetujuan = async (req, res) => {
+const approvePersetujuan = async (req, res) => {
     const { id, newStatus } = req.body;
 
     try {
@@ -201,7 +201,7 @@ const detailPersetujuan = async (req, res) => {
         }
 
         // Konversi objek Sequelize ke JSON dan buat salinan objek
-        permohonans = JSON.parse(JSON.stringify(permohonan));
+        const permohonans = JSON.parse(JSON.stringify(permohonan));
 
         // Hapus properti yang tidak diinginkan
         delete permohonans.userid;
@@ -227,7 +227,7 @@ const detailPersetujuan = async (req, res) => {
 
 //DOWNLOAD FILE
 const downloadfile = (req, res) => {
-    const fileName = req.params.fileName;
+    const { fileName } = req?.params;
     const directoryPath = "public/uploads/"; // Sesuaikan dengan direktori penyimpanan Anda
 
     res.download(directoryPath + fileName, fileName, (err) => {
@@ -281,7 +281,7 @@ const hapusPersetujuan = async (req, res) => {
 };
 
 module.exports = {
-    createPersetujuan,
+    approvePersetujuan,
     allPersetujuan,
     detailPersetujuan,
     hapusPersetujuan,

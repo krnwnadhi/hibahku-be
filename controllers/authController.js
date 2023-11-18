@@ -26,19 +26,19 @@ const register = async (req, res) => {
         if (isNaN(nik)) {
             return res.status(400).json({
                 success: false,
-                msg: "NIK harus angka.",
+                message: "NIK harus angka.",
             });
         } else {
             const nikStr = nik.toString(); // Convert it back to a string
             if (nikStr.length < 16) {
                 return res.status(400).json({
                     success: false,
-                    msg: "NIK terlalu pendek. Minimal 16 angka.",
+                    message: "NIK terlalu pendek. Minimal 16 angka.",
                 });
             } else if (nikStr.length > 16) {
                 return res.status(400).json({
                     success: false,
-                    msg: "NIK terlalu panjang. Maksimal 16 Angka",
+                    message: "NIK terlalu panjang. Maksimal 16 Angka",
                 });
             }
         }
@@ -51,7 +51,7 @@ const register = async (req, res) => {
         ) {
             return res.status(400).json({
                 success: false,
-                msg: "Harap mengisi form yang kosong!",
+                message: "Harap mengisi form yang kosong!",
             });
         }
 
@@ -64,7 +64,7 @@ const register = async (req, res) => {
         if (existingUser) {
             return res
                 .status(409)
-                .json({ success: false, msg: "NIK Sudah digunakan." });
+                .json({ success: false, message: "NIK Sudah digunakan." });
         }
 
         // Create a new User instance with id equal to nik
@@ -82,11 +82,11 @@ const register = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            msg: "Register berhasil",
+            message: "Register berhasil",
             data: newUser,
         });
     } catch (error) {
-        return res.status(500).json({ success: false, msg: error.message });
+        return res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -96,7 +96,7 @@ const login = async (req, res) => {
     if (!nik || !password) {
         return res
             .status(400)
-            .json({ msg: "NIK atau password tidak boleh kosong" });
+            .json({ message: "NIK atau password tidak boleh kosong" });
     }
 
     try {
@@ -104,14 +104,14 @@ const login = async (req, res) => {
         const user = await User.findOne({ where: { nik } });
 
         if (!user) {
-            return res.status(404).json({ msg: "NIK tidak terdaftar!" });
+            return res.status(404).json({ message: "NIK tidak terdaftar!" });
         }
 
         // Compare the provided password with the hashed password in the database
         const isPasswordValid = await bcryptjs.compare(password, user.password);
 
         if (!isPasswordValid) {
-            return res.status(401).json({ msg: "Password salah" });
+            return res.status(401).json({ message: "Password salah" });
         }
 
         // User is authenticated, generate a JWT token
@@ -123,29 +123,29 @@ const login = async (req, res) => {
             return res.status(200).json({
                 token,
                 role: user?.roleid,
-                msg: "Admin login berhasil",
+                message: "Admin login berhasil",
             });
         } else if (user.roleid === 2) {
             return res.status(200).json({
                 token,
                 role: user?.roleid,
-                msg: "User login berhasil",
+                message: "User login berhasil",
             });
         } else {
             return res
                 .status(200)
-                .json({ token, role: user?.roleid, msg: "Login berhasil" });
+                .json({ token, role: user?.roleid, message: "Login berhasil" });
         }
     } catch (error) {
         console.error(error);
-        // res.status(500).json({ msg: "Internal Server Error" });
-        return res.status(500).json({ success: false, msg: error.message });
+        // res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json({ success: false, message: error.message });
     }
 };
 
 const logout = (req, res) => {
     // Tanggapi permintaan logout dengan respons status 200 OK
-    res.status(200).json({ msg: "Logout successful" });
+    res.status(200).json({ message: "Logout successful" });
 };
 
 module.exports = { register, login, logout };
