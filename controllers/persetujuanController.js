@@ -239,9 +239,161 @@ const downloadfile = (req, res) => {
     });
 };
 
-//MENGHAPUS PERMOHONAN
+//HAPUS PERSETUJUAN
+const deleteFile = async (fileId, filePath) => {
+    try {
+        // Check if the file exists
+        await fs.promises.access(filePath, fs.constants.F_OK);
+
+        // If the file exists, proceed with deletion
+        await fs.promises.unlink(filePath);
+        console.log(`File deleted: ${filePath}`);
+    } catch (error) {
+        if (error.code === "ENOENT") {
+            // The file doesn't exist; log a message or handle it as needed
+            console.log(`File not found: ${filePath}`);
+        } else {
+            // Other errors; log and propagate the error
+            console.error("Error deleting file:", error);
+            throw error;
+        }
+    }
+};
+
+const deleteRelatedFiles = async (deletedPermohonan) => {
+    const fileFields = [
+        "skid",
+        "ktpid",
+        "suratpermohonanid",
+        "asetrekomid",
+        "suketid",
+        "burekid",
+        "proposalid",
+        "rabid",
+    ];
+
+    for (const field of fileFields) {
+        const fileId = deletedPermohonan.getDataValue(field);
+
+        if (fileId) {
+            const fileModel = getModelForField(field); // Function to get the Sequelize model based on the field
+            const file = await fileModel.findByPk(fileId);
+
+            if (file) {
+                await deleteFile(fileId, file.path);
+            }
+        }
+    }
+
+    // Additional code to delete KTP file and entry
+    const ktpId = deletedPermohonan.getDataValue("ktpid");
+    if (ktpId) {
+        const ktp = await Ktp.findByPk(ktpId);
+
+        if (ktp) {
+            await deleteFile(ktpId, ktp.path);
+            await ktp.destroy();
+        }
+    }
+    const skId = deletedPermohonan.getDataValue("skid");
+    if (skId) {
+        const sk = await Sk.findByPk(skId); // Change ktpId to skId
+
+        if (sk) {
+            await deleteFile(skId, sk.path);
+            await sk.destroy();
+        }
+    }
+
+    const burekId = deletedPermohonan.getDataValue("burekid");
+    if (burekId) {
+        const burek = await Burek.findByPk(burekId);
+
+        if (burek) {
+            await deleteFile(burekId, burek.path);
+            await burek.destroy();
+        }
+    }
+
+    const asetrekomId = deletedPermohonan.getDataValue("asetrekomid");
+    if (asetrekomId) {
+        const asetrekom = await Asetrekom.findByPk(asetrekomId);
+
+        if (asetrekom) {
+            await deleteFile(asetrekomId, asetrekom.path);
+            await asetrekom.destroy();
+        }
+    }
+
+    const proposalId = deletedPermohonan.getDataValue("proposalid");
+    if (proposalId) {
+        const proposal = await Proposal.findByPk(proposalId);
+
+        if (proposal) {
+            await deleteFile(proposalId, proposal.path);
+            await proposal.destroy();
+        }
+    }
+
+    const rabId = deletedPermohonan.getDataValue("rabid");
+    if (rabId) {
+        const rab = await Rab.findByPk(rabId);
+
+        if (rab) {
+            await deleteFile(rabId, rab.path);
+            await rab.destroy();
+        }
+    }
+
+    const suratpermohonanId =
+        deletedPermohonan.getDataValue("suratpermohonanid");
+    if (suratpermohonanId) {
+        const suratpermohonan = await Suratpermohonan.findByPk(
+            suratpermohonanId
+        );
+
+        if (suratpermohonan) {
+            await deleteFile(suratpermohonanId, suratpermohonan.path);
+            await suratpermohonan.destroy();
+        }
+    }
+
+    const suketId = deletedPermohonan.getDataValue("suketid");
+    if (suketId) {
+        const suket = await Suket.findByPk(suketId);
+
+        if (suket) {
+            await deleteFile(suketId, suket.path);
+            await suket.destroy();
+        }
+    }
+};
+
+const getModelForField = (field) => {
+    switch (field) {
+        case "skid":
+            return Sk;
+        case "ktpid":
+            return Ktp;
+        case "suratpermohonanid":
+            return Suratpermohonan;
+        case "asetrekomid":
+            return Asetrekom;
+        case "suketid":
+            return Suket;
+        case "burekid":
+            return Burek;
+        case "proposalid":
+            return Proposal;
+        case "rabid":
+            return Rab;
+        default:
+            throw new Error("Invalid field name");
+    }
+};
+
 const hapusPersetujuan = async (req, res) => {
-    const { id } = req.params; // Ambil ID permohonan dari params
+    const { id } = req.params;
 
     try {
         const deletedPermohonan = await Permohonan.findByPk(id);
@@ -252,21 +404,8 @@ const hapusPersetujuan = async (req, res) => {
                 .json({ message: "Data permohonan tidak ditemukan" });
         }
 
-        // Hapus file-file terkait saat permohonan dihapus
-        await Promise.all([
-            Ktp.destroy({ where: { id: deletedPermohonan.ktpid } }),
-            Rab.destroy({ where: { id: deletedPermohonan.rabid } }),
-            Proposal.destroy({ where: { id: deletedPermohonan.proposalid } }),
-            Suket.destroy({ where: { id: deletedPermohonan.suketid } }),
-            Burek.destroy({ where: { id: deletedPermohonan.burekid } }),
-            Asetrekom.destroy({ where: { id: deletedPermohonan.asetrekomid } }),
-            Suratpermohonan.destroy({
-                where: { id: deletedPermohonan.suratpermohonanid },
-            }),
-            Sk.destroy({ where: { id: deletedPermohonan.skid } }),
-        ]);
+        await deleteRelatedFiles(deletedPermohonan);
 
-        // Hapus data permohonan setelah file-file terkait dihapus
         await deletedPermohonan.destroy();
 
         return res.status(200).json({

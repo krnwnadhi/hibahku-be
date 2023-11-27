@@ -43,7 +43,7 @@ const cekStatus = async (req, res) => {
         }
     } catch (error) {
         return res.status(500).json({
-            msg: `Terjadi kesalahan dalam memproses permintaan. ${error.message} `,
+            message: `Terjadi kesalahan dalam memproses permintaan. ${error.message} `,
         });
     }
 };

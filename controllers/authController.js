@@ -64,7 +64,7 @@ const register = async (req, res) => {
         if (existingUser) {
             return res
                 .status(409)
-                .json({ success: false, message: "NIK Sudah digunakan." });
+                .json({ success: false, message: "NIK Sudah Terdaftar." });
         }
 
         // Create a new User instance with id equal to nik
@@ -116,26 +116,33 @@ const login = async (req, res) => {
 
         // User is authenticated, generate a JWT token
         const token = jwt.sign({ userId: user.id, nik: user.nik }, secretKey, {
-            expiresIn: "24h", // 24 Jam Token Kadaluarsa
+            expiresIn: "1d", // 24 Jam Token Kadaluarsa
         });
 
         if (user.roleid === 1) {
             return res.status(200).json({
                 token,
                 role: user?.roleid,
-                message: "Admin login berhasil",
+                nama: user?.nama,
             });
         } else if (user.roleid === 2) {
             return res.status(200).json({
                 token,
                 role: user?.roleid,
-                message: "User login berhasil",
+                nama: user?.nama,
             });
         } else {
-            return res
-                .status(200)
-                .json({ token, role: user?.roleid, message: "Login berhasil" });
+            return res.status(200).json({
+                token,
+                role: user?.roleid,
+                nama: user?.nama,
+                message: "Login berhasil",
+            });
         }
+        // return res.status(200).json({
+        //     token,
+        //     role: user?.roleid,
+        // });
     } catch (error) {
         console.error(error);
         // res.status(500).json({ message: "Internal Server Error" });

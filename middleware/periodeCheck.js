@@ -1,6 +1,5 @@
 const { Op } = require("sequelize");
 const { Periode } = require("../models");
-const { User } = require("../models");
 
 const periodeCheck = async (req, res, next) => {
     const { nik } = req?.body;

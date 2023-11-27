@@ -27,7 +27,7 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-    res.json({ msg: "Selamat Datang di HIBAHKU API v1 ..." });
+    res.json({ message: "Selamat Datang di HIBAHKU API v1..." });
 });
 
 app.use("/api/v1/auth", authRoute);
