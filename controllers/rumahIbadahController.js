@@ -51,9 +51,9 @@ const createRumahIbadah = async (req, res) => {
 };
 
 const listRumahIbadah = async (req, res) => {
-    const page = parseInt(req?.query?.page) || 0;
-    const limit = parseInt(req?.query?.limit) || 10;
-    const search = req?.query?.nama || "";
+    const page = parseInt(req.query.page) - 1 || 0;
+    const limit = parseInt(req.query.limit) || 2;
+    const search = req.query.nama || "";
 
     const offset = limit * page;
 
@@ -68,7 +68,7 @@ const listRumahIbadah = async (req, res) => {
     const totalPage = Math.ceil(totalRows / limit);
 
     try {
-        const data = await Keagamaan.findAll({
+        const result = await Keagamaan.findAll({
             where: {
                 nama: {
                     [Op.like]: `%${search}%`,
@@ -83,13 +83,13 @@ const listRumahIbadah = async (req, res) => {
         });
 
         res.json({
-            success: true,
-            data: data,
+            // success: true,
+            result: result,
             page: page + 1,
             limit: limit,
             totalItems: totalRows,
             totalPage: totalPage,
-            hasMore: data.length >= limit ? true : false,
+            hasMore: result.length >= limit ? true : false,
         });
     } catch (error) {
         return res.status(500).json({
