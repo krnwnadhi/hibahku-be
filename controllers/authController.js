@@ -116,7 +116,8 @@ const login = async (req, res) => {
 
         // User is authenticated, generate a JWT token
         const token = jwt.sign({ userId: user.id, nik: user.nik }, secretKey, {
-            expiresIn: "1d", // 24 Jam Token Kadaluarsa
+            // expiresIn: "1d", // 24 Jam Token Kadaluarsa
+            expiresIn: "1h", // 1 Jam Token Kadaluarsa
         });
 
         if (user.roleid === 1) {

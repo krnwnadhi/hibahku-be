@@ -14,7 +14,7 @@ rumahIbadah.get(
 
 rumahIbadah.post(
     "/create",
-    verifyToken,
+    // verifyToken,
     rumahIbadahController.createRumahIbadah
 );
 

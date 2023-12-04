@@ -34,17 +34,16 @@ const createRumahIbadah = async (req, res) => {
         const newDataRumahIbadah = await dataRumahIbadah.save();
 
         if (newDataRumahIbadah) {
-            return res
-                .status(201)
-                .json({ message: "Data Rumah Ibadah berhasil disimpan" });
+            return res.status(201).json({
+                message: "Data berhasil disimpan",
+                data: newDataRumahIbadah,
+            });
         } else {
-            return res
-                .status(500)
-                .json({ message: "Gagal menyimpan data Rumah Ibadah" });
+            return res.status(500).json({ message: "Gagal menyimpan data" });
         }
     } catch (error) {
         return res.status(500).json({
-            message: "Terjadi kesalahan saat menyimpan data Rumah Ibadah",
+            message: "Terjadi kesalahan saat menyimpan data",
             error: error.message,
         });
     }
@@ -52,7 +51,7 @@ const createRumahIbadah = async (req, res) => {
 
 const listRumahIbadah = async (req, res) => {
     const page = parseInt(req.query.page) - 1 || 0;
-    const limit = parseInt(req.query.limit) || 2;
+    const limit = parseInt(req.query.limit) || 10;
     const search = req.query.nama || "";
 
     const offset = limit * page;
