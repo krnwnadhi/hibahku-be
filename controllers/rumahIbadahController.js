@@ -18,8 +18,8 @@ const createRumahIbadah = async (req, res) => {
         });
 
         if (existingRumahIbadah) {
-            return res.status(409).json({
-                message: "ID Rumah Ibadah sudah terdaftar",
+            return res.status(404).json({
+                message: "ID SIMAS/NSPP sudah terdaftar",
             });
         }
 
@@ -93,7 +93,7 @@ const listRumahIbadah = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Gagal memuat data Rumah Ibadah",
+            message: "Gagal memuat data Rumah Ibadah." + error,
         });
     }
 };

@@ -105,6 +105,8 @@ const permohonan = async (req, res) => {
             saveFile(file_asetrekom, Asetrekom),
         ]);
 
+        // console.log("savedFiles: ", savedFiles);
+
         const permohonanData = new Permohonan({
             keagamaanid: body.keagamaanid,
             pengajuandana: body.pengajuandana,
@@ -125,7 +127,10 @@ const permohonan = async (req, res) => {
 
         await permohonanData.save();
 
-        return res.status(201).json({ message: "Permohonan berhasil" });
+        return res.status(201).json({
+            message: "Permohonan berhasil",
+            permohonanData: permohonanData,
+        });
     } catch (error) {
         // If an error occurs during the database save, delete the uploaded files
         await deleteUploadedFiles([
@@ -138,7 +143,9 @@ const permohonan = async (req, res) => {
             file_suratpermohonan,
             file_asetrekom,
         ]);
-        return res.status(500).json({ message: "Gagal menyimpan file" });
+        return res
+            .status(500)
+            .json({ message: "Gagal menyimpan file" + error });
     }
 };
 

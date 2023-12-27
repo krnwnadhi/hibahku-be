@@ -45,6 +45,19 @@ const verifyPeriode = async (req, res) => {
     }
 };
 
+const getPeriode = async (req, res) => {
+    try {
+        const result = await Periode.findAll();
+        res.json(result);
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Gagal memuat Periode",
+        });
+    }
+};
+
 module.exports = {
     verifyPeriode,
+    getPeriode,
 };

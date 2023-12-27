@@ -116,27 +116,34 @@ const login = async (req, res) => {
 
         // User is authenticated, generate a JWT token
         const token = jwt.sign({ userId: user.id, nik: user.nik }, secretKey, {
-            // expiresIn: "1d", // 24 Jam Token Kadaluarsa
-            expiresIn: "1h", // 1 Jam Token Kadaluarsa
+            expiresIn: "1d", // 24 Jam Token Kadaluarsa
         });
+
+        // console.log("user", user);
 
         if (user.roleid === 1) {
             return res.status(200).json({
                 token,
                 role: user?.roleid,
                 nama: user?.nama,
+                nik: user?.nik,
+                notelpon: user?.notelpon,
             });
         } else if (user.roleid === 2) {
             return res.status(200).json({
                 token,
                 role: user?.roleid,
                 nama: user?.nama,
+                nik: user?.nik,
+                notelpon: user?.notelpon,
             });
         } else {
             return res.status(200).json({
                 token,
                 role: user?.roleid,
                 nama: user?.nama,
+                nik: user?.nik,
+                notelpon: user?.notelpon,
                 message: "Login berhasil",
             });
         }

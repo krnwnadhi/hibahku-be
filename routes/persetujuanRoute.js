@@ -9,7 +9,7 @@ const persetujuanRoute = express.Router();
 persetujuanRoute.get(
     "/list",
     verifyToken,
-    roleCheck,
+    // roleCheck,
     persetujuanController.allPersetujuan
 );
 
@@ -24,6 +24,12 @@ persetujuanRoute.get(
     "/detail/:id",
     verifyToken,
     roleCheck,
+    persetujuanController.detailPersetujuan
+);
+
+persetujuanRoute.get(
+    "/detail/user/:id",
+    verifyToken,
     persetujuanController.detailPersetujuan
 );
 

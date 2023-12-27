@@ -32,14 +32,22 @@ const cekStatus = async (req, res) => {
 
                     return res.status(400).json({
                         message: `Anda harus menunggu 2 tahun untuk mengajukan permohonan lagi. Terakhir diajukan pada: ${lastSubmissionDate}. Anda dapat mengajukan lagi setelah: ${nextSubmissionFormattedDate}`,
+                        isUploaded: true,
                     });
                 }
             }
 
             // Jika tidak ada permohonan sebelumnya atau sudah lebih dari 2 tahun
-            return res.status(200).send("Silahkan upload dokumen");
+            // return res.status(200).send("Silahkan upload dokumen");
+            return res
+                .status(200)
+                .json({ message: "Silahkan upload dokumen", isUpload: true });
         } else {
-            return res.status(404).send("Data agama tidak ditemukan");
+            // return res.status(404).send("Data agama tidak ditemukan");
+            return res.status(200).json({
+                message: `Data Tidak Ditemukan! Harap mendaftarkan Rumah Ibadah / Lembaga Pendidikan Keagamaan terlebih dahulu.`,
+                isUpload: false,
+            });
         }
     } catch (error) {
         return res.status(500).json({
