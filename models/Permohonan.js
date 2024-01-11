@@ -61,14 +61,17 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "aktapendirianid",
                 as: "Aktapendirian",
             });
+
             Permohonan.belongsTo(models.Izinoperasional, {
                 foreignKey: "izinoperasionalid",
                 as: "Izinoperasional",
             });
+
             Permohonan.belongsTo(models.Pengesahankemenkumham, {
                 foreignKey: "pengesahankemenkumhamid",
                 as: "Pengesahankemenkumham",
             });
+
             Permohonan.belongsTo(models.Statusprogres, {
                 foreignKey: "statusprogresid",
                 as: "Statusprogres",

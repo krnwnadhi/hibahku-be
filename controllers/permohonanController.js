@@ -56,6 +56,9 @@ const permohonan = async (req, res) => {
         file_suratpermohonan,
         file_asetrekom,
         file_proposal,
+        file_izinoperasional,
+        file_aktapendirian,
+        file_pengesahankemenkumham,
     } = files;
 
     const keagamaanID = body.keagamaanid;
