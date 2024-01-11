@@ -64,7 +64,7 @@ const register = async (req, res) => {
         if (existingUser) {
             return res
                 .status(409)
-                .json({ success: false, message: "NIK Sudah Terdaftar." });
+                .json({ success: false, message: "NIK Sudah Terdaftar!" });
         }
 
         // Create a new User instance with id equal to nik
@@ -82,7 +82,7 @@ const register = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: "Register berhasil",
+            message: "Register berhasil!",
             data: newUser,
         });
     } catch (error) {
@@ -96,7 +96,7 @@ const login = async (req, res) => {
     if (!nik || !password) {
         return res
             .status(400)
-            .json({ message: "NIK atau password tidak boleh kosong" });
+            .json({ message: "NIK atau password tidak boleh kosong!" });
     }
 
     try {
@@ -111,7 +111,7 @@ const login = async (req, res) => {
         const isPasswordValid = await bcryptjs.compare(password, user.password);
 
         if (!isPasswordValid) {
-            return res.status(401).json({ message: "Password salah" });
+            return res.status(401).json({ message: "Password salah!" });
         }
 
         // User is authenticated, generate a JWT token

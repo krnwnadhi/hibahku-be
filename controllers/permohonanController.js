@@ -112,7 +112,6 @@ const permohonan = async (req, res) => {
             pengajuandana: body.pengajuandana,
             tujuan: body.tujuan,
             norek: body.norek,
-            statusid: 1,
             ktpid: savedFiles[0].id,
             rabid: savedFiles[1].id,
             suketid: savedFiles[2].id,
@@ -121,7 +120,8 @@ const permohonan = async (req, res) => {
             suratpermohonanid: savedFiles[5].id,
             asetrekomid: savedFiles[6].id,
             proposalid: savedFiles[7].id,
-            prosesid: 3,
+            statusid: 3,
+            prosesid: 10,
             userid: user.nik,
         });
 

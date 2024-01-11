@@ -13,13 +13,6 @@ persetujuanRoute.get(
     persetujuanController.allPersetujuan
 );
 
-persetujuanRoute.post(
-    "/approve/:id",
-    verifyToken,
-    roleCheck,
-    persetujuanController.approvePersetujuan
-);
-
 persetujuanRoute.get(
     "/detail/:id",
     verifyToken,
@@ -33,10 +26,17 @@ persetujuanRoute.get(
     persetujuanController.detailPersetujuan
 );
 
-persetujuanRoute.get(
-    "/download/:fileName",
+persetujuanRoute.post(
+    "/:id",
     verifyToken,
     roleCheck,
+    persetujuanController.approvePersetujuan
+);
+
+persetujuanRoute.get(
+    "/download/:fileName",
+    // verifyToken,
+    // roleCheck,
     persetujuanController.downloadfile
 );
 

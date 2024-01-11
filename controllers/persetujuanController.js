@@ -21,7 +21,7 @@ const fs = require("fs"); // Module untuk menghapus file
 
 // APPROVAL MERUBAH STATUS
 const approvePersetujuan = async (req, res) => {
-    const { id, newStatus } = req.body;
+    const { id, newStatus, newProses } = req.body;
 
     try {
         // Cari permohonan berdasarkan ID
@@ -36,10 +36,23 @@ const approvePersetujuan = async (req, res) => {
         // Lakukan pembaruan status dan keterangan
         existingPermohonan.statusid = newStatus;
         if (newStatus === 2) {
-            existingPermohonan.prosesid = 10;
+            existingPermohonan.prosesid = 11;
         } else if (newStatus === 1) {
             existingPermohonan.prosesid = 1;
+        } else if (newStatus === 3) {
+            existingPermohonan.prosesid = 10;
         }
+
+        // Lakukan pembaruan proses dan keterangan
+
+        // existingPermohonan.prosesid = newProses;
+        // if (newProses === 10) {
+        //     existingPermohonan.statusid = 3;
+        // } else if (newProses === 11) {
+        //     existingPermohonan.statusid = 2;
+        // } else {
+        //     existingPermohonan.statusid = 1;
+        // }
 
         // Simpan perubahan ke dalam database
         await existingPermohonan.save();
@@ -64,29 +77,8 @@ const approvePersetujuan = async (req, res) => {
 };
 
 const allPersetujuan = async (req, res) => {
-    const page = parseInt(req?.query?.page) || 0;
-    const limit = parseInt(req?.query?.limit) || 10;
-    const search = req?.query?.keagamaanid || "";
-
-    const offset = limit * page;
-
-    const totalRows = await Permohonan.count({
-        where: {
-            keagamaanid: {
-                [Op.like]: `%${search}%`,
-            },
-        },
-    });
-
-    const totalPage = Math.ceil(totalRows / limit);
-
     try {
-        const data = await Permohonan.findAll({
-            where: {
-                keagamaanid: {
-                    [Op.like]: `%${search}%`,
-                },
-            },
+        const result = await Permohonan.findAll({
             include: [
                 { model: User, as: "User", attributes: ["nama", "notelpon"] },
                 {
@@ -124,24 +116,17 @@ const allPersetujuan = async (req, res) => {
                 { model: Asetrekom, as: "Asetrekom", attributes: ["namafile"] },
                 { model: Rab, as: "Rab", attributes: ["namafile"] },
             ],
-            offset: offset,
-            limit: limit,
+
             order: [["createdAt", "DESC"]],
         });
 
         res.json({
-            success: true,
-            data: data,
-            page: page + 1,
-            limit: limit,
-            totalItems: totalRows,
-            totalPage: totalPage,
-            hasMore: data.length >= limit ? true : false,
+            result: result,
         });
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Gagal memuat data Rumah Ibadah",
+            message: "Gagal memuat data",
         });
     }
 };
@@ -153,11 +138,15 @@ const detailPersetujuan = async (req, res) => {
     try {
         const permohonan = await Permohonan.findByPk(permohonanId, {
             include: [
-                { model: User, as: "User", attributes: ["nama", "notelpon"] },
+                {
+                    model: User,
+                    as: "User",
+                    attributes: ["nik", "nama", "notelpon"],
+                },
                 {
                     model: Keagamaan,
                     as: "Keagamaan",
-                    attributes: ["nama", "wilayah", "alamat"],
+                    attributes: ["id", "nama", "wilayah", "alamat"],
                     include: [
                         {
                             model: Kategori,
@@ -216,7 +205,7 @@ const detailPersetujuan = async (req, res) => {
         delete permohonans.statusid;
         delete permohonans.keagamaanid;
 
-        return res.status(200).json({ success: true, data: permohonans });
+        return res.status(200).json([permohonans]);
     } catch (error) {
         console.error("Error:", error);
         return res

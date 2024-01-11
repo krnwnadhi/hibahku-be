@@ -17,7 +17,7 @@ const periodeCheck = async (req, res, next) => {
         if (
             activePeriod &&
             nik !== "1571020410940041" &&
-            nik !== "1571020410940040"
+            nik !== "197710102008011004"
         ) {
             const { selesai } = activePeriod;
 

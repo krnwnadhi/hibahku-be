@@ -8,7 +8,7 @@ module.exports = {
             [
                 {
                     nama: "VERIFIKASI PERSYARATAN ADMINISTRASI",
-                    keterangan: "LENGKAP DAN PEBAIKAN",
+                    keterangan: "LENGKAP DAN PERBAIKAN",
                 },
                 {
                     nama: "VERIFIKASI FAKTUAL(SURVEI LAPANGAN)",
@@ -45,6 +45,10 @@ module.exports = {
                 {
                     nama: "DALAM PROSES",
                     keterangan: "PROSES",
+                },
+                {
+                    nama: "DITOLAK",
+                    keterangan: "DITOLAK",
                 },
             ],
             {}
