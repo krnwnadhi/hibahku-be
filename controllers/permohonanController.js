@@ -4,11 +4,14 @@ const {
     Ktp,
     Proposal,
     Asetrekom,
-    Burek,
+    // Burek,
     Rab,
     Sk,
     Suket,
     Suratpermohonan,
+    Izinoperasional,
+    Aktapendirian,
+    Pengesahankemenkumham,
 } = require("../models");
 const fs = require("fs");
 
@@ -51,7 +54,7 @@ const permohonan = async (req, res) => {
         file_ktp,
         file_rab,
         file_suket,
-        file_burek,
+        // file_burek,
         file_sk,
         file_suratpermohonan,
         file_asetrekom,
@@ -83,11 +86,14 @@ const permohonan = async (req, res) => {
                 file_ktp,
                 file_rab,
                 file_suket,
-                file_burek,
+                // file_burek,
                 file_sk,
                 file_proposal,
                 file_suratpermohonan,
                 file_asetrekom,
+                file_izinoperasional,
+                file_aktapendirian,
+                file_pengesahankemenkumham,
             ]);
             return res.status(403).json({
                 message:
@@ -101,14 +107,17 @@ const permohonan = async (req, res) => {
             saveFile(file_ktp, Ktp),
             saveFile(file_rab, Rab),
             saveFile(file_suket, Suket),
-            saveFile(file_burek, Burek),
+            // saveFile(file_burek, Burek),
             saveFile(file_sk, Sk),
             saveFile(file_proposal, Proposal),
             saveFile(file_suratpermohonan, Suratpermohonan),
             saveFile(file_asetrekom, Asetrekom),
+            saveFile(file_izinoperasional, Izinoperasional),
+            saveFile(file_aktapendirian, Aktapendirian),
+            saveFile(file_pengesahankemenkumham, Pengesahankemenkumham),
         ]);
 
-        // console.log("savedFiles: ", savedFiles);
+        console.log("savedFiles: ", savedFiles);
 
         const permohonanData = new Permohonan({
             keagamaanid: body.keagamaanid,
@@ -117,13 +126,17 @@ const permohonan = async (req, res) => {
             norek: body.norek,
             ktpid: savedFiles[0].id,
             rabid: savedFiles[1].id,
-            suketid: savedFiles[2].id,
-            burekid: savedFiles[3].id,
-            skid: savedFiles[4].id,
+            suketid: savedFiles[2]?.id,
+            // burekid: savedFiles[3].id,
+            skid: savedFiles[3].id,
+            proposalid: savedFiles[4].id,
             suratpermohonanid: savedFiles[5].id,
-            asetrekomid: savedFiles[6].id,
-            proposalid: savedFiles[7].id,
+            asetrekomid: savedFiles[6]?.id,
+            izinoperasionalid: savedFiles[7]?.id,
+            aktapendirianid: savedFiles[8]?.id,
+            pengesahankemenkumhamid: savedFiles[9]?.id,
             statusid: 3,
+            statusprogresid: 3,
             prosesid: 10,
             userid: user.nik,
         });
@@ -140,11 +153,14 @@ const permohonan = async (req, res) => {
             file_ktp,
             file_rab,
             file_suket,
-            file_burek,
+            // file_burek,
             file_sk,
             file_proposal,
             file_suratpermohonan,
             file_asetrekom,
+            file_izinoperasional,
+            file_aktapendirian,
+            file_pengesahankemenkumham,
         ]);
         return res
             .status(500)

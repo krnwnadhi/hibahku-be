@@ -27,17 +27,20 @@ const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 1024 * 1024 * 10, // File size limit (10MB)
+        fileSize: 1024 * 1024 * 5, // File size limit (5MB)
     },
 }).fields([
     { name: "file_ktp" },
     { name: "file_rab" },
     { name: "file_proposal" },
     { name: "file_suket" },
-    { name: "file_burek" },
+    // { name: "file_burek" },
     { name: "file_asetrekom" },
     { name: "file_suratpermohonan" },
     { name: "file_sk" },
+    { name: "file_izinoperasional" },
+    { name: "file_aktapendirian" },
+    { name: "file_pengesahankemenkumham" },
 ]);
 
 module.exports = upload;

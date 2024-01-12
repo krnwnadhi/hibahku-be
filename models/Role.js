@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: "Role", // Sesuaikan dengan nama model Anda
-            tableName: "role", // Sesuaikan dengan nama tabel Anda
+            tableName: "roles", // Sesuaikan dengan nama tabel Anda
             timestamps: true,
         }
     );

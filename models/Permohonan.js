@@ -23,11 +23,10 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "skid",
                 as: "Sk",
             });
-            Permohonan.belongsTo(models.Burek, {
-                foreignKey: "burekid",
-                as: "Burek",
-            });
-
+            // Permohonan.belongsTo(models.Burek, {
+            //     foreignKey: "burekid",
+            //     as: "Burek",
+            // });
             Permohonan.belongsTo(models.Asetrekom, {
                 foreignKey: "asetrekomid",
                 as: "Asetrekom",
@@ -91,7 +90,7 @@ module.exports = (sequelize, DataTypes) => {
             suratpermohonanid: DataTypes.INTEGER,
             asetrekomid: DataTypes.INTEGER,
             suketid: DataTypes.INTEGER,
-            burekid: DataTypes.INTEGER,
+            // burekid: DataTypes.INTEGER,
             proposalid: DataTypes.INTEGER,
             rabid: DataTypes.INTEGER,
             aktapendirianid: DataTypes.INTEGER,
@@ -102,7 +101,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: "Permohonan",
-            tableName: "permohonan",
+            tableName: "permohonans",
             timestamps: true,
         }
     );

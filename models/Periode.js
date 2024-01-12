@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: "Periode",
-            tableName: "periode",
+            tableName: "periodes",
             timestamps: true,
         }
     );

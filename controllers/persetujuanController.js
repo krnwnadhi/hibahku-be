@@ -4,7 +4,7 @@ const {
     Rab,
     Proposal,
     Suket,
-    Burek,
+    // Burek,
     Asetrekom,
     Suratpermohonan,
     Sk,
@@ -13,6 +13,9 @@ const {
     Kategori,
     User,
     Proses,
+    Izinoperasional,
+    Aktapendirian,
+    Pengesahankemenkumham,
 } = require("../models");
 const { Op } = require("sequelize");
 
@@ -112,9 +115,24 @@ const allPersetujuan = async (req, res) => {
                 },
                 { model: Sk, as: "Sk", attributes: ["namafile"] },
                 { model: Proposal, as: "Proposal", attributes: ["namafile"] },
-                { model: Burek, as: "Burek", attributes: ["namafile"] },
+                // { model: Burek, as: "Burek", attributes: ["namafile"] },
                 { model: Asetrekom, as: "Asetrekom", attributes: ["namafile"] },
                 { model: Rab, as: "Rab", attributes: ["namafile"] },
+                {
+                    model: Izinoperasional,
+                    as: "Izinoperasional",
+                    attributes: ["namafile"],
+                },
+                {
+                    model: Aktapendirian,
+                    as: "Aktapendirian",
+                    attributes: ["namafile"],
+                },
+                {
+                    model: Pengesahankemenkumham,
+                    as: "Pengesahankemenkumham",
+                    attributes: ["namafile"],
+                },
             ],
 
             order: [["createdAt", "DESC"]],
@@ -174,9 +192,24 @@ const detailPersetujuan = async (req, res) => {
                 },
                 { model: Sk, as: "Sk", attributes: ["namafile"] },
                 { model: Proposal, as: "Proposal", attributes: ["namafile"] },
-                { model: Burek, as: "Burek", attributes: ["namafile"] },
+                // { model: Burek, as: "Burek", attributes: ["namafile"] },
                 { model: Asetrekom, as: "Asetrekom", attributes: ["namafile"] },
                 { model: Rab, as: "Rab", attributes: ["namafile"] },
+                {
+                    model: Izinoperasional,
+                    as: "Izinoperasional",
+                    attributes: ["namafile"],
+                },
+                {
+                    model: Aktapendirian,
+                    as: "Aktapendirian",
+                    attributes: ["namafile"],
+                },
+                {
+                    model: Pengesahankemenkumham,
+                    as: "Pengesahankemenkumham",
+                    attributes: ["namafile"],
+                },
 
                 // Pastikan semua entitas terkait telah didefinisikan dengan benar di model Anda
                 // Ganti entitas "Status", "Keagamaan", dan lainnya dengan nama entitas yang benar jika tidak sesuai
@@ -199,11 +232,14 @@ const detailPersetujuan = async (req, res) => {
         delete permohonans.suratpermohonanid;
         delete permohonans.asetrekomid;
         delete permohonans.suketid;
-        delete permohonans.burekid;
+        // delete permohonans.burekid;
         delete permohonans.proposalid;
         delete permohonans.rabid;
         delete permohonans.statusid;
         delete permohonans.keagamaanid;
+        delete permohonans.izinoperasional;
+        delete permohonans.aktapendirian;
+        delete permohonans.pengesahankemenkumham;
 
         return res.status(200).json([permohonans]);
     } catch (error) {
@@ -256,9 +292,12 @@ const deleteRelatedFiles = async (deletedPermohonan) => {
         "suratpermohonanid",
         "asetrekomid",
         "suketid",
-        "burekid",
+        // "burekid",
         "proposalid",
         "rabid",
+        "izinoperasionalid",
+        "aktapendirianid",
+        "pengesahankemenkumhamid",
     ];
 
     for (const field of fileFields) {
@@ -294,15 +333,15 @@ const deleteRelatedFiles = async (deletedPermohonan) => {
         }
     }
 
-    const burekId = deletedPermohonan.getDataValue("burekid");
-    if (burekId) {
-        const burek = await Burek.findByPk(burekId);
+    // const burekId = deletedPermohonan.getDataValue("burekid");
+    // if (burekId) {
+    //     const burek = await Burek.findByPk(burekId);
 
-        if (burek) {
-            await deleteFile(burekId, burek.path);
-            await burek.destroy();
-        }
-    }
+    //     if (burek) {
+    //         await deleteFile(burekId, burek.path);
+    //         await burek.destroy();
+    //     }
+    // }
 
     const asetrekomId = deletedPermohonan.getDataValue("asetrekomid");
     if (asetrekomId) {
@@ -356,6 +395,46 @@ const deleteRelatedFiles = async (deletedPermohonan) => {
             await suket.destroy();
         }
     }
+
+    const izinoperasionalId =
+        deletedPermohonan.getDataValue("izinoperasionalid");
+    if (izinoperasionalId) {
+        const izinoperasional = await Izinoperasional.findByPk(
+            izinoperasionalId
+        );
+
+        if (izinoperasional) {
+            await deleteFile(izinoperasionalId, izinoperasional.path);
+            await izinoperasional.destroy();
+        }
+    }
+
+    const aktapendirianId = deletedPermohonan.getDataValue("aktapendirianid");
+    if (aktapendirianId) {
+        const aktapendirian = await Aktapendirian.findByPk(aktapendirianId);
+
+        if (aktapendirian) {
+            await deleteFile(aktapendirianId, aktapendirian.path);
+            await aktapendirian.destroy();
+        }
+    }
+
+    const pengesahankemenkumhamId = deletedPermohonan.getDataValue(
+        "pengesahankemenkumhamid"
+    );
+    if (pengesahankemenkumhamId) {
+        const pengesahankemenkumham = await Pengesahankemenkumham.findByPk(
+            pengesahankemenkumhamId
+        );
+
+        if (pengesahankemenkumham) {
+            await deleteFile(
+                pengesahankemenkumhamId,
+                pengesahankemenkumham.path
+            );
+            await pengesahankemenkumham.destroy();
+        }
+    }
 };
 
 const getModelForField = (field) => {
@@ -370,12 +449,18 @@ const getModelForField = (field) => {
             return Asetrekom;
         case "suketid":
             return Suket;
-        case "burekid":
-            return Burek;
+        // case "burekid":
+        //     return Burek;
         case "proposalid":
             return Proposal;
         case "rabid":
             return Rab;
+        case "izinoperasionalid":
+            return Izinoperasional;
+        case "aktapendirianid":
+            return Aktapendirian;
+        case "pengesahankemenkumhamid":
+            return Pengesahankemenkumham;
         default:
             throw new Error("Invalid field name");
     }

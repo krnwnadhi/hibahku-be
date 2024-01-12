@@ -46,9 +46,6 @@ module.exports = {
             suketid: {
                 type: Sequelize.INTEGER,
             },
-            burekid: {
-                type: Sequelize.INTEGER,
-            },
             proposalid: {
                 type: Sequelize.INTEGER,
             },
@@ -67,7 +64,6 @@ module.exports = {
             statusprogresid: {
                 type: Sequelize.INTEGER,
             },
-
             createdAt: {
                 type: Sequelize.DATE,
                 defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
