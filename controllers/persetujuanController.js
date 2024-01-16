@@ -4,7 +4,6 @@ const {
     Rab,
     Proposal,
     Suket,
-    // Burek,
     Asetrekom,
     Suratpermohonan,
     Sk,
@@ -28,54 +27,52 @@ const approvePersetujuan = async (req, res) => {
 
     try {
         // Cari permohonan berdasarkan ID
-        const existingPermohonan = await Permohonan.findByPk(id);
+        const dataPermohonan = await Permohonan.findByPk(id);
 
-        if (!existingPermohonan) {
+        // const matchKeterangan = dataPermohonan;
+
+        if (!dataPermohonan) {
             return res
                 .status(404)
                 .json({ message: "Permohonan tidak ditemukan" });
         }
 
         // Lakukan pembaruan status dan keterangan
-        existingPermohonan.statusid = newStatus;
+        dataPermohonan.statusid = newStatus;
+
         if (newStatus === 2) {
-            existingPermohonan.prosesid = 11;
+            dataPermohonan.prosesid = 11;
         } else if (newStatus === 1) {
-            existingPermohonan.prosesid = 1;
+            dataPermohonan.prosesid = 1;
         } else if (newStatus === 3) {
-            existingPermohonan.prosesid = 10;
+            dataPermohonan.prosesid = 10;
         }
 
-        // Lakukan pembaruan proses dan keterangan
-
-        // existingPermohonan.prosesid = newProses;
-        // if (newProses === 10) {
-        //     existingPermohonan.statusid = 3;
-        // } else if (newProses === 11) {
-        //     existingPermohonan.statusid = 2;
-        // } else {
-        //     existingPermohonan.statusid = 1;
-        // }
+        if (newProses !== undefined) {
+            dataPermohonan.prosesid = newProses;
+            // Atur statusid berdasarkan newProses
+            if (newProses === 10) {
+                dataPermohonan.statusid = 3;
+            } else if (newProses === 11) {
+                dataPermohonan.statusid = 2;
+            } else {
+                dataPermohonan.statusid = 1;
+            }
+        }
 
         // Simpan perubahan ke dalam database
-        await existingPermohonan.save();
+        await dataPermohonan.save();
 
         return res.status(200).json({
-            success: true,
             message: "Data permohonan berhasil diperbarui",
-            data: existingPermohonan,
+            data: dataPermohonan,
         });
     } catch (error) {
         console.error("Error:", error);
 
-        // Catat pesan kesalahan ke dalam log
-        // Sebaiknya disesuaikan dengan cara Anda melakukan logging
-        // Contoh penggunaan log:
-        // logger.error('Gagal memperbarui data permohonan', error);
-
         return res
             .status(500)
-            .json({ message: "Gagal memperbarui data permohonan" });
+            .json({ message: "Gagal memperbarui data permohonan." + error });
     }
 };
 
@@ -181,8 +178,9 @@ const detailPersetujuan = async (req, res) => {
                 {
                     model: Proses,
                     as: "Proses",
-                    attributes: ["id", "nama", "keterangan"],
+                    attributes: ["id", "nama", "keterangan", "updatedAt"],
                 },
+
                 { model: Ktp, as: "Ktp", attributes: ["namafile"] },
                 { model: Suket, as: "Suket", attributes: ["namafile"] },
                 {
@@ -232,7 +230,6 @@ const detailPersetujuan = async (req, res) => {
         delete permohonans.suratpermohonanid;
         delete permohonans.asetrekomid;
         delete permohonans.suketid;
-        // delete permohonans.burekid;
         delete permohonans.proposalid;
         delete permohonans.rabid;
         delete permohonans.statusid;

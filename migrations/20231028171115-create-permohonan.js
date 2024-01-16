@@ -40,16 +40,16 @@ module.exports = {
             suratpermohonanid: {
                 type: Sequelize.INTEGER,
             },
-            asetrekomid: {
-                type: Sequelize.INTEGER,
-            },
-            suketid: {
-                type: Sequelize.INTEGER,
-            },
             proposalid: {
                 type: Sequelize.INTEGER,
             },
             rabid: {
+                type: Sequelize.INTEGER,
+            },
+            asetrekomid: {
+                type: Sequelize.INTEGER,
+            },
+            suketid: {
                 type: Sequelize.INTEGER,
             },
             aktapendirianid: {
@@ -59,9 +59,6 @@ module.exports = {
                 type: Sequelize.INTEGER,
             },
             pengesahankemenkumhamid: {
-                type: Sequelize.INTEGER,
-            },
-            statusprogresid: {
                 type: Sequelize.INTEGER,
             },
             createdAt: {

@@ -70,11 +70,6 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "pengesahankemenkumhamid",
                 as: "Pengesahankemenkumham",
             });
-
-            Permohonan.belongsTo(models.Statusprogres, {
-                foreignKey: "statusprogresid",
-                as: "Statusprogres",
-            });
         }
     }
     Permohonan.init(
@@ -96,7 +91,6 @@ module.exports = (sequelize, DataTypes) => {
             aktapendirianid: DataTypes.INTEGER,
             izinoperasionalid: DataTypes.INTEGER,
             pengesahankemenkumhamid: DataTypes.INTEGER,
-            statusprogresid: DataTypes.INTEGER,
         },
         {
             sequelize,

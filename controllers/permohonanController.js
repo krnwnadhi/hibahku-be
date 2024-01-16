@@ -68,7 +68,9 @@ const permohonan = async (req, res) => {
     const existingKeagamaan = await Keagamaan.findByPk(keagamaanID);
 
     if (!existingKeagamaan) {
-        return res.status(404).json({ message: "ID agama tidak terdaftar" });
+        return res
+            .status(404)
+            .json({ message: "ID SIMAS/NSM/NSPP tidak terdaftar" });
     }
 
     const existingPermohonan = await Permohonan.findOne({
@@ -136,7 +138,6 @@ const permohonan = async (req, res) => {
             aktapendirianid: savedFiles[8]?.id,
             pengesahankemenkumhamid: savedFiles[9]?.id,
             statusid: 3,
-            statusprogresid: 3,
             prosesid: 10,
             userid: user.nik,
         });

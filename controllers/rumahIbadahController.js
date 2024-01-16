@@ -52,9 +52,7 @@ const createRumahIbadah = async (req, res) => {
 const listRumahIbadah = async (req, res) => {
     try {
         const result = await Keagamaan.findAll({
-            include: [
-                { model: Kategori, as: "Kategori", attributes: ["id", "nama"] },
-            ],
+            include: [{ model: Kategori, as: "Kategori" }],
             order: [["createdAt", "DESC"]],
         });
 
