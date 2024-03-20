@@ -72,7 +72,7 @@ const approvePersetujuan = async (req, res) => {
 
         return res
             .status(500)
-            .json({ message: "Gagal memperbarui data permohonan." + error });
+            .json({ message: "Gagal memperbarui data permohonan!" + error });
     }
 };
 
@@ -141,14 +141,124 @@ const allPersetujuan = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Gagal memuat data",
+            message: "Gagal memuat data! " + error,
         });
     }
 };
 
-//MENAMPILKAN PERMOHONAN BY ID
+//MENAMPILKAN PERMOHONAN BY ID ADMIN
 const detailPersetujuan = async (req, res) => {
     const permohonanId = req?.params?.id;
+    const userId = req?.user?.id;
+
+    console.log("userId", userId);
+    console.log(permohonanId);
+
+    try {
+        const permohonan = await Permohonan.findAll({
+            where: {
+                userid: permohonanId,
+            },
+            include: [
+                {
+                    model: User,
+                    as: "User",
+                    attributes: ["nik", "nama", "notelpon"],
+                },
+                {
+                    model: Keagamaan,
+                    as: "Keagamaan",
+                    attributes: ["id", "nama", "wilayah", "alamat"],
+                    include: [
+                        {
+                            model: Kategori,
+                            as: "Kategori",
+                            attributes: ["id", "nama"],
+                        },
+                    ],
+                },
+                {
+                    model: Status,
+                    as: "Status",
+                    attributes: ["id", "nama"],
+                },
+                {
+                    model: Proses,
+                    as: "Proses",
+                    attributes: ["id", "nama", "keterangan", "updatedAt"],
+                },
+
+                { model: Ktp, as: "Ktp", attributes: ["namafile"] },
+                { model: Suket, as: "Suket", attributes: ["namafile"] },
+                {
+                    model: Suratpermohonan,
+                    as: "Suratpermohonan",
+                    attributes: ["namafile"],
+                },
+                { model: Sk, as: "Sk", attributes: ["namafile"] },
+                { model: Proposal, as: "Proposal", attributes: ["namafile"] },
+                // { model: Burek, as: "Burek", attributes: ["namafile"] },
+                { model: Asetrekom, as: "Asetrekom", attributes: ["namafile"] },
+                { model: Rab, as: "Rab", attributes: ["namafile"] },
+                {
+                    model: Izinoperasional,
+                    as: "Izinoperasional",
+                    attributes: ["namafile"],
+                },
+                {
+                    model: Aktapendirian,
+                    as: "Aktapendirian",
+                    attributes: ["namafile"],
+                },
+                {
+                    model: Pengesahankemenkumham,
+                    as: "Pengesahankemenkumham",
+                    attributes: ["namafile"],
+                },
+
+                // Pastikan semua entitas terkait telah didefinisikan dengan benar di model Anda
+                // Ganti entitas "Status", "Keagamaan", dan lainnya dengan nama entitas yang benar jika tidak sesuai
+            ],
+        });
+
+        if (!permohonan) {
+            return res
+                .status(404)
+                .json({ message: "Data Permohonan Tidak Ditemukan" });
+        }
+
+        // Konversi objek Sequelize ke JSON dan buat salinan objek
+        const permohonans = JSON.parse(JSON.stringify(permohonan));
+
+        // Hapus properti yang tidak diinginkan
+        delete permohonans.userid;
+        delete permohonans.skid;
+        delete permohonans.ktpid;
+        delete permohonans.suratpermohonanid;
+        delete permohonans.asetrekomid;
+        delete permohonans.suketid;
+        delete permohonans.proposalid;
+        delete permohonans.rabid;
+        delete permohonans.statusid;
+        delete permohonans.keagamaanid;
+        delete permohonans.izinoperasional;
+        delete permohonans.aktapendirian;
+        delete permohonans.pengesahankemenkumham;
+
+        return res.status(200).json(permohonans);
+    } catch (error) {
+        console.error("Error:", error);
+        return res
+            .status(500)
+            .json({ message: "Gagal memuat detail permohonan!" + error });
+    }
+};
+
+//MENAMPILKAN PERMOHONAN BY ID
+const detailPersetujuanAdmin = async (req, res) => {
+    const permohonanId = req?.params?.id;
+
+    console.log(permohonanId);
 
     try {
         const permohonan = await Permohonan.findByPk(permohonanId, {
@@ -243,7 +353,7 @@ const detailPersetujuan = async (req, res) => {
         console.error("Error:", error);
         return res
             .status(500)
-            .json({ message: "Gagal memuat detail permohonan" });
+            .json({ message: "Gagal memuat detail permohonan!" + error });
     }
 };
 
@@ -493,6 +603,7 @@ const hapusPersetujuan = async (req, res) => {
 module.exports = {
     approvePersetujuan,
     allPersetujuan,
+    detailPersetujuanAdmin,
     detailPersetujuan,
     hapusPersetujuan,
     downloadfile,

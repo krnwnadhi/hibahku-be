@@ -104,19 +104,25 @@ const login = async (req, res) => {
         const user = await User.findOne({ where: { nik } });
 
         if (!user) {
-            return res.status(404).json({ message: "NIK tidak terdaftar!" });
+            return res.status(404).json({
+                message:
+                    "NIK tidak terdaftar! Halaman akan reload otomatis dalam 4 detik! ",
+            });
         }
 
         // Compare the provided password with the hashed password in the database
         const isPasswordValid = await bcryptjs.compare(password, user.password);
 
         if (!isPasswordValid) {
-            return res.status(401).json({ message: "Password salah!" });
+            return res.status(401).json({
+                message:
+                    "Password salah! Halaman akan reload otomatis dalam 4 detik!",
+            });
         }
 
         // User is authenticated, generate a JWT token
         const token = jwt.sign({ userId: user.id, nik: user.nik }, secretKey, {
-            expiresIn: "1d", // 24 Jam Token Kadaluarsa
+            expiresIn: "365d", // 1 Tahun Token Kadaluarsa
         });
 
         // console.log("user", user);

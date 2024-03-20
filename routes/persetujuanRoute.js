@@ -17,7 +17,7 @@ persetujuanRoute.get(
     "/detail/:id",
     verifyToken,
     roleCheck,
-    persetujuanController.detailPersetujuan
+    persetujuanController.detailPersetujuanAdmin
 );
 
 persetujuanRoute.get(

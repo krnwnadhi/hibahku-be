@@ -12,9 +12,8 @@ module.exports = {
             userid: {
                 type: Sequelize.BIGINT,
             },
-
             keagamaanid: {
-                type: Sequelize.BIGINT,
+                type: Sequelize.STRING,
             },
             statusid: {
                 type: Sequelize.INTEGER,

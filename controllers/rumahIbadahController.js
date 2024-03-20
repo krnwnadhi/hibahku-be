@@ -19,7 +19,7 @@ const createRumahIbadah = async (req, res) => {
 
         if (existingRumahIbadah) {
             return res.status(404).json({
-                message: "ID SIMAS/NSPP sudah terdaftar",
+                message: "ID SIMAS/No. NSPP/NSM sudah terdaftar",
             });
         }
 
