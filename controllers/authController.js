@@ -86,7 +86,11 @@ const register = async (req, res) => {
             data: newUser,
         });
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({
+            success: false,
+            message: "Register Gagal!",
+            error: error?.message,
+        });
     }
 };
 
@@ -125,8 +129,6 @@ const login = async (req, res) => {
             expiresIn: "365d", // 1 Tahun Token Kadaluarsa
         });
 
-        // console.log("user", user);
-
         if (user.roleid === 1) {
             return res.status(200).json({
                 token,
@@ -153,14 +155,12 @@ const login = async (req, res) => {
                 message: "Login berhasil",
             });
         }
-        // return res.status(200).json({
-        //     token,
-        //     role: user?.roleid,
-        // });
     } catch (error) {
-        console.error(error);
-        // res.status(500).json({ message: "Internal Server Error" });
-        return res.status(500).json({ success: false, message: error.message });
+        return res.status(500).json({
+            success: false,
+            message: "Login Gagal!",
+            error: error?.message,
+        });
     }
 };
 

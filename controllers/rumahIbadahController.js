@@ -1,8 +1,6 @@
 const { Op } = require("sequelize");
 const { Keagamaan, Kategori } = require("../models");
 
-// const { Sequelize } = require("sequelize");
-
 const createRumahIbadah = async (req, res) => {
     try {
         const { id, nama, alamat, wilayah, kategoriid } = req?.body;
@@ -35,16 +33,17 @@ const createRumahIbadah = async (req, res) => {
 
         if (newDataRumahIbadah) {
             return res.status(201).json({
-                message: "Data berhasil disimpan",
+                message: "Data berhasil disimpan!",
                 data: newDataRumahIbadah,
             });
         } else {
-            return res.status(500).json({ message: "Gagal menyimpan data" });
+            return res.status(500).json({ message: "Gagal menyimpan data!" });
         }
     } catch (error) {
         return res.status(500).json({
-            message: "Terjadi kesalahan saat menyimpan data",
-            error: error.message,
+            status: false,
+            message: "Terjadi kesalahan saat menyimpan data!",
+            error: error?.message,
         });
     }
 };
@@ -62,7 +61,8 @@ const listRumahIbadah = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Gagal memuat data Rumah Ibadah." + error,
+            message: "Gagal memuat data Rumah Ibadah!",
+            error: error?.message,
         });
     }
 };

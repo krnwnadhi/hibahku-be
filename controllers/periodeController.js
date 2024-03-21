@@ -39,8 +39,8 @@ const verifyPeriode = async (req, res) => {
         }
     } catch (error) {
         return res.status(500).json({
-            message: "Gagal untuk membuat atau memperbaharui periode.",
-            error: error.message,
+            message: "Gagal untuk membuat/memperbaharui periode!",
+            error: error?.message,
         });
     }
 };
@@ -51,8 +51,9 @@ const getPeriode = async (req, res) => {
         res.json(result);
     } catch (error) {
         return res.status(500).json({
-            success: false,
-            message: "Gagal memuat Periode",
+            status: false,
+            message: "Gagal memuat data Periode!",
+            error: error?.message,
         });
     }
 };

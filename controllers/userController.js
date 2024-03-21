@@ -21,7 +21,8 @@ const getUsers = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Gagal memuat data." + error.message,
+            message: "Gagal memuat data Users!",
+            error: error?.message,
         });
     }
 };
@@ -48,7 +49,11 @@ const getUsersById = async (req, res) => {
             res.json(user);
         }
     } catch (error) {
-        res.json(error);
+        return res.status(500).json({
+            success: false,
+            message: "Gagal memuat data detail Users!",
+            error: error?.message,
+        });
     }
 };
 

@@ -29,6 +29,11 @@ const saveFile = async (file, Model) => {
         }
     } catch (error) {
         console.error("Error saving file:", error);
+        // return res.status(500).json({
+        //     status: false,
+        //     message: "Gagal menyimpan data!",
+        //     error: error?.message,
+        // });
         return null;
     }
 };
@@ -40,8 +45,12 @@ const deleteUploadedFiles = async (files) => {
             const filePath = file[0].path;
             try {
                 fs.unlinkSync(filePath); // Menghapus file
-            } catch (err) {
-                console.error("Error deleting file:", err);
+            } catch (error) {
+                return res.status(500).json({
+                    status: false,
+                    message: "Gagal menghapus data!",
+                    error: error?.message,
+                });
             }
         }
     });
@@ -54,7 +63,6 @@ const permohonan = async (req, res) => {
         file_ktp,
         file_rab,
         file_suket,
-        // file_burek,
         file_sk,
         file_suratpermohonan,
         file_asetrekom,
@@ -109,7 +117,6 @@ const permohonan = async (req, res) => {
             saveFile(file_ktp, Ktp),
             saveFile(file_rab, Rab),
             saveFile(file_suket, Suket),
-            // saveFile(file_burek, Burek),
             saveFile(file_sk, Sk),
             saveFile(file_proposal, Proposal),
             saveFile(file_suratpermohonan, Suratpermohonan),
@@ -129,7 +136,6 @@ const permohonan = async (req, res) => {
             ktpid: savedFiles[0].id,
             rabid: savedFiles[1].id,
             suketid: savedFiles[2]?.id,
-            // burekid: savedFiles[3].id,
             skid: savedFiles[3].id,
             proposalid: savedFiles[4].id,
             suratpermohonanid: savedFiles[5].id,
@@ -154,7 +160,6 @@ const permohonan = async (req, res) => {
             file_ktp,
             file_rab,
             file_suket,
-            // file_burek,
             file_sk,
             file_proposal,
             file_suratpermohonan,
@@ -163,9 +168,11 @@ const permohonan = async (req, res) => {
             file_aktapendirian,
             file_pengesahankemenkumham,
         ]);
-        return res
-            .status(500)
-            .json({ message: "Gagal menyimpan file" + error });
+        return res.status(500).json({
+            status: false,
+            message: "Gagal menyimpan permohonan!",
+            error: error?.message,
+        });
     }
 };
 

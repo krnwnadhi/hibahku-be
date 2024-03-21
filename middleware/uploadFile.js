@@ -34,7 +34,6 @@ const upload = multer({
     { name: "file_rab" },
     { name: "file_proposal" },
     { name: "file_suket" },
-    // { name: "file_burek" },
     { name: "file_asetrekom" },
     { name: "file_suratpermohonan" },
     { name: "file_sk" },

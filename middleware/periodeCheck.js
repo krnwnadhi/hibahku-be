@@ -28,10 +28,11 @@ const periodeCheck = async (req, res, next) => {
 
         next();
     } catch (error) {
-        console.error(error);
-        return res
-            .status(500)
-            .json({ message: "Terjadi kesalahan saat memeriksa periode." });
+        return res.status(500).json({
+            status: false,
+            message: "Terjadi kesalahan saat memeriksa periode!",
+            error: error?.message,
+        });
     }
 };
 

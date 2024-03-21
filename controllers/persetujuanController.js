@@ -64,15 +64,15 @@ const approvePersetujuan = async (req, res) => {
         await dataPermohonan.save();
 
         return res.status(200).json({
-            message: "Data permohonan berhasil diperbarui",
+            message: "Data berhasil diperbarui!",
             data: dataPermohonan,
         });
     } catch (error) {
-        console.error("Error:", error);
-
-        return res
-            .status(500)
-            .json({ message: "Gagal memperbarui data permohonan!" + error });
+        return res.status(500).json({
+            status: false,
+            message: "Gagal memperbarui data!",
+            error: error?.message,
+        });
     }
 };
 
@@ -141,7 +141,8 @@ const allPersetujuan = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Gagal memuat data! " + error,
+            message: "Gagal memuat data! ",
+            error: error?.message,
         });
     }
 };
@@ -197,7 +198,6 @@ const detailPersetujuan = async (req, res) => {
                 },
                 { model: Sk, as: "Sk", attributes: ["namafile"] },
                 { model: Proposal, as: "Proposal", attributes: ["namafile"] },
-                // { model: Burek, as: "Burek", attributes: ["namafile"] },
                 { model: Asetrekom, as: "Asetrekom", attributes: ["namafile"] },
                 { model: Rab, as: "Rab", attributes: ["namafile"] },
                 {
@@ -247,18 +247,17 @@ const detailPersetujuan = async (req, res) => {
 
         return res.status(200).json(permohonans);
     } catch (error) {
-        console.error("Error:", error);
-        return res
-            .status(500)
-            .json({ message: "Gagal memuat detail permohonan!" + error });
+        return res.status(500).json({
+            status: false,
+            message: "Gagal memuat detail permohonan!",
+            error: error?.message,
+        });
     }
 };
 
 //MENAMPILKAN PERMOHONAN BY ID
 const detailPersetujuanAdmin = async (req, res) => {
     const permohonanId = req?.params?.id;
-
-    console.log(permohonanId);
 
     try {
         const permohonan = await Permohonan.findByPk(permohonanId, {
@@ -300,7 +299,6 @@ const detailPersetujuanAdmin = async (req, res) => {
                 },
                 { model: Sk, as: "Sk", attributes: ["namafile"] },
                 { model: Proposal, as: "Proposal", attributes: ["namafile"] },
-                // { model: Burek, as: "Burek", attributes: ["namafile"] },
                 { model: Asetrekom, as: "Asetrekom", attributes: ["namafile"] },
                 { model: Rab, as: "Rab", attributes: ["namafile"] },
                 {
@@ -350,10 +348,11 @@ const detailPersetujuanAdmin = async (req, res) => {
 
         return res.status(200).json([permohonans]);
     } catch (error) {
-        console.error("Error:", error);
-        return res
-            .status(500)
-            .json({ message: "Gagal memuat detail permohonan!" + error });
+        return res.status(500).json({
+            status: false,
+            message: "Gagal memuat detail permohonan!",
+            error: error?.message,
+        });
     }
 };
 
@@ -365,7 +364,8 @@ const downloadfile = (req, res) => {
     res.download(directoryPath + fileName, fileName, (err) => {
         if (err) {
             res.status(500).send({
-                message: "Gagal mendownload file." + err,
+                status: false,
+                message: "Gagal mendownload file!" + err,
             });
         }
     });
@@ -399,7 +399,6 @@ const deleteRelatedFiles = async (deletedPermohonan) => {
         "suratpermohonanid",
         "asetrekomid",
         "suketid",
-        // "burekid",
         "proposalid",
         "rabid",
         "izinoperasionalid",
@@ -439,16 +438,6 @@ const deleteRelatedFiles = async (deletedPermohonan) => {
             await sk.destroy();
         }
     }
-
-    // const burekId = deletedPermohonan.getDataValue("burekid");
-    // if (burekId) {
-    //     const burek = await Burek.findByPk(burekId);
-
-    //     if (burek) {
-    //         await deleteFile(burekId, burek.path);
-    //         await burek.destroy();
-    //     }
-    // }
 
     const asetrekomId = deletedPermohonan.getDataValue("asetrekomid");
     if (asetrekomId) {
@@ -556,8 +545,6 @@ const getModelForField = (field) => {
             return Asetrekom;
         case "suketid":
             return Suket;
-        // case "burekid":
-        //     return Burek;
         case "proposalid":
             return Proposal;
         case "rabid":
@@ -590,13 +577,14 @@ const hapusPersetujuan = async (req, res) => {
         await deletedPermohonan.destroy();
 
         return res.status(200).json({
-            message: "Data permohonan dan file-file terkait berhasil dihapus",
+            message: "Data permohonan dan file-file terkait berhasil dihapus!",
         });
     } catch (error) {
-        console.error("Error:", error);
-        return res
-            .status(500)
-            .json({ message: "Gagal menghapus data permohonan" });
+        return res.status(500).json({
+            status: false,
+            message: "Gagal menghapus data permohonan!",
+            error: error?.message,
+        });
     }
 };
 
