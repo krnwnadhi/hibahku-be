@@ -17,7 +17,10 @@ const periodeRoute = require("./routes/periodeRoute");
 
 global.__basedir = __dirname;
 
-dotenv.config();
+dotenv.config({
+    origin: true,
+    credentials: true,
+});
 
 const PORT = process.env.PORT;
 // Mengizinkan akses dari semua origin
@@ -27,7 +30,16 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-    res.json({ message: "Selamat Datang di HIBAHKU API v1..." });
+    res.json({ message: "HIBAHKU API v1.0.1" });
+});
+
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
 });
 
 app.use("/api/v1/auth", authRoute);

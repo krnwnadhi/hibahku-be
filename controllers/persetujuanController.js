@@ -141,7 +141,7 @@ const allPersetujuan = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Gagal memuat data! ",
+            message: "Gagal memuat data!" + error.message,
             error: error?.message,
         });
     }
