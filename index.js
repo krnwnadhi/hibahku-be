@@ -23,14 +23,20 @@ dotenv.config({
 });
 
 const PORT = process.env.PORT;
-// Mengizinkan akses dari semua origin
-app.use(cors());
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
+// Mengizinkan akses dari semua origin
+const corsOptions = {
+    origin: "*",
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 app.get("/", (req, res) => {
-    res.json({ message: "HIBAHKU API v1.0.1" });
+    res.json({ message: "HIBAHKU API v1.0.0.beta" });
 });
 
 app.use(function (req, res, next) {

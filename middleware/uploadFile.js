@@ -1,34 +1,38 @@
+const util = require("util");
 const multer = require("multer");
+const path = require("path");
+const maxSize = 5 * 1024 * 1024; //5MB
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "public/uploads/"); // Set the directory for uploaded files
+let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, __basedir + "/public/uploads");
     },
     filename: function (req, file, cb) {
-        const uniqueFileName =
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        console.log(uniqueSuffix);
+        cb(
+            null,
             file.fieldname +
-            "-" +
-            Date.now() +
-            "." +
-            file.originalname.split(".").pop();
-        cb(null, uniqueFileName); // Set the filename for the uploaded file
+                "-" +
+                uniqueSuffix +
+                path.extname(file.originalname)
+        );
     },
 });
 
 const fileFilter = (req, file, cb) => {
-    // Check file type (for instance: accepting only PDF files)
     if (file.mimetype !== "application/pdf") {
-        return cb(new Error("Only PDF files are allowed"));
+        req.pdfUploadError = "Hanya upload file berekstensi PDF!";
+        cb(null, false);
+    } else {
+        cb(null, true);
     }
-
-    cb(null, true);
 };
-const upload = multer({
+
+let uploadFile = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: {
-        fileSize: 1024 * 1024 * 5, // File size limit (5MB)
-    },
+    limits: { fileSize: maxSize },
 }).fields([
     { name: "file_ktp" },
     { name: "file_rab" },
@@ -42,4 +46,5 @@ const upload = multer({
     { name: "file_pengesahankemenkumham" },
 ]);
 
-module.exports = upload;
+let uploadFileMiddleware = util.promisify(uploadFile);
+module.exports = uploadFileMiddleware;

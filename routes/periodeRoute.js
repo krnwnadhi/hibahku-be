@@ -7,6 +7,11 @@ const periodeRoute = express.Router();
 
 periodeRoute.post("/", verifyToken, roleCheck, periodeController.verifyPeriode);
 
-periodeRoute.get("/", verifyToken, roleCheck, periodeController.getPeriode);
+periodeRoute.get(
+    "/",
+    verifyToken,
+    // roleCheck,
+    periodeController.getPeriode
+);
 
 module.exports = periodeRoute;

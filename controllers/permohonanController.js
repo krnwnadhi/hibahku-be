@@ -104,8 +104,7 @@ const permohonan = async (req, res) => {
                 file_pengesahankemenkumham,
             ]);
             return res.status(403).json({
-                message:
-                    "ID agama telah digunakan dalam permohonan dalam dua tahun terakhir. Silakan coba lagi setelah 2 tahun.",
+                message: `ID Rumah Ibadah/No. NSPP/NSM Lembaga Keagamaan : (${existingPermohonan?.keagamaanid}) telah mengajukan permohonan dalam dua tahun terakhir. Silakan mengajukan permohonan lagi setelah 2 tahun. Terima Kasih!`,
             });
         }
     }
@@ -124,7 +123,7 @@ const permohonan = async (req, res) => {
             saveFile(file_pengesahankemenkumham, Pengesahankemenkumham),
         ]);
 
-        console.log("savedFiles: ", savedFiles);
+        // console.log("savedFiles: ", savedFiles);
 
         const permohonanData = new Permohonan({
             keagamaanid: body.keagamaanid,
@@ -148,11 +147,18 @@ const permohonan = async (req, res) => {
 
         await permohonanData.save();
 
+        // if (req.file == undefined) {
+        //     return res.status(400).send({
+        //         message: "Mohon upload semua file dokumen yang diperlukan!",
+        //     });
+        // }
+
         return res.status(201).json({
             message: "Permohonan berhasil",
             permohonanData: permohonanData,
         });
     } catch (error) {
+        console.log(error);
         // If an error occurs during the database save, delete the uploaded files
         await deleteUploadedFiles([
             file_ktp,
@@ -166,6 +172,14 @@ const permohonan = async (req, res) => {
             file_aktapendirian,
             file_pengesahankemenkumham,
         ]);
+
+        if (error.code == "LIMIT_FILE_SIZE") {
+            console.log(error);
+            return res.status(500).send({
+                message: "Ukuran file harus dibawah 5MB!",
+            });
+        }
+
         return res.status(500).json({
             status: false,
             message: "Gagal menyimpan permohonan!",
