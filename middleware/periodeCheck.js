@@ -4,6 +4,14 @@ const { Periode } = require("../models");
 const periodeCheck = async (req, res, next) => {
     const { nik } = req?.body;
 
+    // Options for toLocaleDateString to format the date in Indonesian
+    const options = {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "Asia/Jakarta",
+    };
+
     try {
         const currentDate = new Date();
 
@@ -22,7 +30,10 @@ const periodeCheck = async (req, res, next) => {
             const { selesai } = activePeriod;
 
             return res.status(403).json({
-                message: `Mohon Maaf, Akses Ditutup hingga ${selesai}. Silakan coba lagi nanti.`,
+                message: `Mohon Maaf, Saat ini akses HIBAHKU ditutup hingga ${selesai.toLocaleDateString(
+                    "id-ID",
+                    options
+                )}. Silakan akses kembali setelah periode dibuka kembali. Terima Kasih.`,
             });
         }
 

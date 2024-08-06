@@ -109,8 +109,7 @@ const login = async (req, res) => {
 
         if (!user) {
             return res.status(404).json({
-                message:
-                    "NIK tidak terdaftar! Halaman akan reload otomatis dalam 4 detik! ",
+                message: "NIK tidak terdaftar!",
             });
         }
 
@@ -119,8 +118,7 @@ const login = async (req, res) => {
 
         if (!isPasswordValid) {
             return res.status(401).json({
-                message:
-                    "Password salah! Halaman akan reload otomatis dalam 4 detik!",
+                message: "Password salah! ",
             });
         }
 
