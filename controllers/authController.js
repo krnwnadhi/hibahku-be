@@ -93,32 +93,14 @@ const login = async (req, res) => {
             expiresIn: "365d", // 1 Tahun Token Kadaluarsa
         });
 
-        if (user.roleid === 1) {
-            return res.status(200).json({
-                token,
-                role: user?.roleid,
-                nama: user?.nama,
-                nik: user?.nik,
-                notelpon: user?.notelpon,
-            });
-        } else if (user.roleid === 2) {
-            return res.status(200).json({
-                token,
-                role: user?.roleid,
-                nama: user?.nama,
-                nik: user?.nik,
-                notelpon: user?.notelpon,
-            });
-        } else {
-            return res.status(200).json({
-                token,
-                role: user?.roleid,
-                nama: user?.nama,
-                nik: user?.nik,
-                notelpon: user?.notelpon,
-                message: "Login berhasil",
-            });
-        }
+        return res.status(200).json({
+            token,
+            role: user.roleid,
+            nama: user.nama,
+            nik: user.nik,
+            notelpon: user.notelpon,
+            message: "Login berhasil",
+        });
     } catch (error) {
         return res.status(500).json({
             success: false,
