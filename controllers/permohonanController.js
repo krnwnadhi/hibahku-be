@@ -12,7 +12,8 @@ const {
     Aktapendirian,
     Pengesahankemenkumham,
 } = require("../models");
-const fs = require("fs");
+// const fs = require("fs");
+const fs = require("fs").promises; // Use the promise-based version of fs
 
 // Fungsi untuk menyimpan file
 const saveFile = async (file, Model) => {
@@ -37,26 +38,66 @@ const saveFile = async (file, Model) => {
     }
 };
 
-// Fungsi untuk menghapus file terunggah
-const deleteUploadedFiles = async (files) => {
-    files.forEach(async (file) => {
-        if (file && file.length > 0) {
-            const filePath = file[0].path;
-            try {
-                fs.unlinkSync(filePath); // Menghapus file
-            } catch (error) {
-                return res.status(500).json({
-                    status: false,
-                    message: "Gagal menghapus data!",
-                    error: error?.message,
-                });
-            }
-        }
-    });
+// // Fungsi untuk menghapus file terunggah
+// const deleteUploadedFiles = async (files) => {
+//     files.forEach(async (file) => {
+//         if (file && file.length > 0) {
+//             const filePath = file[0].path;
+//             try {
+//                 fs.unlinkSync(filePath); // Menghapus file
+//             } catch (error) {
+//                 return res.status(500).json({
+//                     status: false,
+//                     message: "Gagal menghapus data!",
+//                     error: error?.message,
+//                 });
+//             }
+//         }
+//     });
+// };
+
+// const deleteUploadedFiles = async (files) => {
+//     // Filter out any undefined or empty file arrays
+//     const filePaths = files
+//         .filter((f) => f && f.length > 0)
+//         .map((f) => f[0].path);
+
+//     // Concurrently delete all files and wait for them to finish
+//     try {
+//         await Promise.all(filePaths.map((path) => fs.unlink(path)));
+//     } catch (error) {
+//         // Log the error but let the controller handle the response
+//         console.error("Error deleting one or more files:", error);
+//         return res.status(500).json({
+//             status: false,
+//             message: "Gagal menghapus data!",
+//             error: error?.message,
+//         });
+//     }
+// };
+
+// Helper to delete physical files asynchronously
+const deleteUploadedFiles = async (filesObject) => {
+    const filesToDelete = Object.values(filesObject).flat().filter(Boolean);
+    if (filesToDelete.length === 0) return;
+
+    const paths = filesToDelete.map((file) => file.path);
+    try {
+        await Promise.all(paths.map((path) => fs.unlink(path)));
+        console.log("Cleaned up uploaded files successfully.");
+    } catch (error) {
+        console.error("Error deleting one or more files:", error);
+        return res.status(500).json({
+            status: false,
+            message: "Gagal menghapus data!",
+            error: error?.message,
+        });
+    }
 };
 
 const permohonan = async (req, res) => {
     const { body, files, user } = req;
+    const keagamaanID = body.keagamaanid;
 
     const {
         file_ktp,
@@ -71,13 +112,12 @@ const permohonan = async (req, res) => {
         file_pengesahankemenkumham,
     } = files;
 
-    const keagamaanID = body.keagamaanid;
     const existingKeagamaan = await Keagamaan.findByPk(keagamaanID);
 
     if (!existingKeagamaan) {
         return res
             .status(404)
-            .json({ message: "ID SIMAS/NSM/NSPP tidak terdaftar" });
+            .json({ message: "ID SIMAS/NSM/NSPP tidak terdaftar!" });
     }
 
     const existingPermohonan = await Permohonan.findOne({
@@ -86,11 +126,18 @@ const permohonan = async (req, res) => {
     });
 
     if (existingPermohonan) {
-        const currentDate = new Date();
-        const twoYearsAgo = new Date();
-        twoYearsAgo.setFullYear(currentDate.getFullYear() - 2);
+        // 1. Dapatkan tahun saat ini dan tahun permohonan terakhir secara langsung.
+        const currentYear = new Date().getFullYear();
+        const lastSubmissionYear = new Date(
+            existingPermohonan.createdAt
+        ).getFullYear();
 
-        if (existingPermohonan.createdAt > twoYearsAgo) {
+        // 2. Hitung tahun di mana pengajuan berikutnya diizinkan (tahun terakhir + 2).
+        const nextAvailableYear = lastSubmissionYear + 2;
+
+        // 3. Cek apakah tahun ini masih kurang dari tahun yang diizinkan.
+        if (currentYear < nextAvailableYear) {
+            // Hapus file yang sudah terlanjur di-upload karena validasi gagal.
             await deleteUploadedFiles([
                 file_ktp,
                 file_rab,
@@ -103,8 +150,10 @@ const permohonan = async (req, res) => {
                 file_aktapendirian,
                 file_pengesahankemenkumham,
             ]);
+
+            // 4. Berikan pesan error yang jelas kapan bisa mengajukan lagi.
             return res.status(403).json({
-                message: `ID Rumah Ibadah/No. NSPP/NSM Lembaga Keagamaan : (${existingPermohonan?.keagamaanid}) telah mengajukan permohonan dalam dua tahun terakhir. Silakan mengajukan permohonan lagi setelah 2 tahun. Terima Kasih!`,
+                message: `Anda sudah pernah mengajukan permohonan pada tahun ${lastSubmissionYear}. Anda baru bisa mengajukan permohonan kembali mulai 1 Januari ${nextAvailableYear}.`,
             });
         }
     }

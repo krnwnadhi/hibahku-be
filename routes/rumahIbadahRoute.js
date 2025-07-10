@@ -7,14 +7,15 @@ const rumahIbadah = express.Router();
 
 rumahIbadah.get(
     "/list",
-    verifyToken,
-    roleCheck,
+    // verifyToken,
+    // roleCheck,
     rumahIbadahController.listRumahIbadah
 );
 
 rumahIbadah.post(
     "/create",
-    // verifyToken,
+    // roleCheck,
+    verifyToken,
     rumahIbadahController.createRumahIbadah
 );
 

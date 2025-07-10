@@ -33,7 +33,7 @@ const periodeCheck = async (req, res, next) => {
                 message: `Mohon Maaf, Saat ini akses HIBAHKU ditutup hingga ${selesai.toLocaleDateString(
                     "id-ID",
                     options
-                )}. Silakan akses kembali setelah periode dibuka kembali. Terima Kasih.`,
+                )}. Silakan akses setelah periode dibuka kembali. Terima Kasih.`,
             });
         }
 

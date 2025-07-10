@@ -48,6 +48,11 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send("Something broke!");
+});
+
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/cek-status", cekStatusRumahIbadahRoute);

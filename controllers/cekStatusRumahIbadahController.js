@@ -15,23 +15,21 @@ const cekStatus = async (req, res) => {
             });
 
             if (lastSubmission) {
-                const twoYearsAgo = new Date();
-                twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+                // 1. Dapatkan tahun saat ini dan tahun pengajuan terakhir.
+                const currentYear = new Date().getFullYear();
+                const lastSubmissionYear = new Date(
+                    lastSubmission.createdAt
+                ).getFullYear();
 
-                if (lastSubmission.createdAt > twoYearsAgo) {
-                    const lastSubmissionDate =
-                        lastSubmission.createdAt.toDateString();
-                    const nextSubmissionDate = new Date(
-                        lastSubmission.createdAt
-                    );
-                    nextSubmissionDate.setFullYear(
-                        nextSubmissionDate.getFullYear() + 2
-                    );
-                    const nextSubmissionFormattedDate =
-                        nextSubmissionDate.toDateString();
+                // 2. Hitung tahun di mana pengajuan berikutnya diizinkan (tahun terakhir + 2).
+                const nextAvailableYear = lastSubmissionYear + 2;
 
+                // 3. Cek apakah tahun ini belum mencapai tahun yang diizinkan untuk pengajuan baru.
+                if (currentYear < nextAvailableYear) {
+                    // 4. Berikan pesan error yang jelas dengan informasi tahun pengajuan terakhir
+                    //    dan kapan bisa mengajukan lagi sesuai aturan baru.
                     return res.status(400).json({
-                        message: `Anda harus menunggu 2 tahun untuk mengajukan permohonan lagi. Terakhir diajukan pada: ${lastSubmissionDate}. Anda dapat mengajukan lagi setelah: ${nextSubmissionFormattedDate}`,
+                        message: `Anda sudah pernah mengajukan permohonan pada tahun ${lastSubmissionYear}. Anda baru bisa mengajukan lagi mulai 1 Januari ${nextAvailableYear}.`,
                         isUploaded: true,
                     });
                 }
