@@ -1,19 +1,17 @@
-const { Op } = require("sequelize");
+// const { Op } = require("sequelize");
 const { Keagamaan, Kategori } = require("../models");
 
 const createRumahIbadah = async (req, res) => {
-    try {
-        const { id, nama, alamat, wilayah, kategoriid } = req?.body;
+    const { id, nama, alamat, wilayah, kategoriid } = req?.body;
 
-        if (!id || !nama || !alamat || !wilayah || !kategoriid) {
-            return res.status(400).json({
-                message: "Tidak boleh kosong",
-            });
-        }
-
-        const existingRumahIbadah = await Keagamaan.findOne({
-            where: { id: id },
+    if (!id || !nama || !alamat || !wilayah || !kategoriid) {
+        return res.status(400).json({
+            message: "Tidak boleh kosong",
         });
+    }
+
+    try {
+        const existingRumahIbadah = await Keagamaan.findByPk(id);
 
         if (existingRumahIbadah) {
             return res.status(404).json({
@@ -21,24 +19,18 @@ const createRumahIbadah = async (req, res) => {
             });
         }
 
-        const dataRumahIbadah = new Keagamaan({
-            id: id,
-            nama: nama,
-            alamat: alamat,
-            wilayah: wilayah,
-            kategoriid: kategoriid,
+        const newDataRumahIbadah = await Keagamaan.create({
+            id,
+            nama,
+            alamat,
+            wilayah,
+            kategoriid,
         });
 
-        const newDataRumahIbadah = await dataRumahIbadah.save();
-
-        if (newDataRumahIbadah) {
-            return res.status(201).json({
-                message: "Data berhasil disimpan!",
-                data: newDataRumahIbadah,
-            });
-        } else {
-            return res.status(500).json({ message: "Gagal menyimpan data!" });
-        }
+        return res.status(201).json({
+            message: "Data berhasil disimpan!",
+            data: newDataRumahIbadah,
+        });
     } catch (error) {
         return res.status(500).json({
             status: false,
@@ -56,7 +48,7 @@ const listRumahIbadah = async (req, res) => {
         });
 
         res.json({
-            result: result,
+            result,
         });
     } catch (error) {
         return res.status(500).json({
