@@ -16,10 +16,40 @@ const {
     Aktapendirian,
     Pengesahankemenkumham,
 } = require("../models");
-const { Op } = require("sequelize");
 
-const path = require("path");
-const fs = require("fs"); // Module untuk menghapus file
+const fs = require("fs").promises; // Module untuk menghapus file
+
+const includeOptions = [
+    { model: User, as: "User", attributes: ["nama", "notelpon", "nik"] },
+    {
+        model: Keagamaan,
+        as: "Keagamaan",
+        attributes: ["nama", "wilayah", "alamat", "id"],
+        include: [
+            { model: Kategori, as: "Kategori", attributes: ["id", "nama"] },
+        ],
+    },
+    { model: Status, as: "Status", attributes: ["id", "nama"] },
+    {
+        model: Proses,
+        as: "Proses",
+        attributes: ["id", "nama", "keterangan", "updatedAt"],
+    },
+    { model: Ktp, as: "Ktp", attributes: ["namafile"] },
+    { model: Rab, as: "Rab", attributes: ["namafile"] },
+    { model: Proposal, as: "Proposal", attributes: ["namafile"] },
+    { model: Suket, as: "Suket", attributes: ["namafile"] },
+    { model: Asetrekom, as: "Asetrekom", attributes: ["namafile"] },
+    { model: Suratpermohonan, as: "Suratpermohonan", attributes: ["namafile"] },
+    { model: Sk, as: "Sk", attributes: ["namafile"] },
+    { model: Izinoperasional, as: "Izinoperasional", attributes: ["namafile"] },
+    { model: Aktapendirian, as: "Aktapendirian", attributes: ["namafile"] },
+    {
+        model: Pengesahankemenkumham,
+        as: "Pengesahankemenkumham",
+        attributes: ["namafile"],
+    },
+];
 
 // APPROVAL MERUBAH STATUS
 const approvePersetujuan = async (req, res) => {
@@ -29,8 +59,6 @@ const approvePersetujuan = async (req, res) => {
         // Cari permohonan berdasarkan ID
         const dataPermohonan = await Permohonan.findByPk(id);
 
-        // const matchKeterangan = dataPermohonan;
-
         if (!dataPermohonan) {
             return res
                 .status(404)
@@ -38,26 +66,16 @@ const approvePersetujuan = async (req, res) => {
         }
 
         // Lakukan pembaruan status dan keterangan
-        dataPermohonan.statusid = newStatus;
-
-        if (newStatus === 2) {
-            dataPermohonan.prosesid = 11;
-        } else if (newStatus === 1) {
-            dataPermohonan.prosesid = 1;
-        } else if (newStatus === 3) {
-            dataPermohonan.prosesid = 10;
-        }
-
         if (newProses !== undefined) {
             dataPermohonan.prosesid = newProses;
-            // Atur statusid berdasarkan newProses
-            if (newProses === 10) {
-                dataPermohonan.statusid = 3;
-            } else if (newProses === 11) {
-                dataPermohonan.statusid = 2;
-            } else {
-                dataPermohonan.statusid = 1;
-            }
+            if (newProses === 10) dataPermohonan.statusid = 3;
+            else if (newProses === 11) dataPermohonan.statusid = 2;
+            else dataPermohonan.statusid = 1;
+        } else {
+            dataPermohonan.statusid = newStatus;
+            if (newStatus === 1) dataPermohonan.prosesid = 1;
+            else if (newStatus === 2) dataPermohonan.prosesid = 11;
+            else if (newStatus === 3) dataPermohonan.prosesid = 10;
         }
 
         // Simpan perubahan ke dalam database
@@ -79,64 +97,11 @@ const approvePersetujuan = async (req, res) => {
 const allPersetujuan = async (req, res) => {
     try {
         const result = await Permohonan.findAll({
-            include: [
-                { model: User, as: "User", attributes: ["nama", "notelpon"] },
-                {
-                    model: Keagamaan,
-                    as: "Keagamaan",
-                    attributes: ["nama", "wilayah", "alamat"],
-                    include: [
-                        {
-                            model: Kategori,
-                            as: "Kategori",
-                            attributes: ["id", "nama"],
-                        },
-                    ],
-                },
-                {
-                    model: Status,
-                    as: "Status",
-                    attributes: ["id", "nama"],
-                },
-                {
-                    model: Proses,
-                    as: "Proses",
-                    attributes: ["id", "nama", "keterangan"],
-                },
-                { model: Ktp, as: "Ktp", attributes: ["namafile"] },
-                { model: Suket, as: "Suket", attributes: ["namafile"] },
-                {
-                    model: Suratpermohonan,
-                    as: "Suratpermohonan",
-                    attributes: ["namafile"],
-                },
-                { model: Sk, as: "Sk", attributes: ["namafile"] },
-                { model: Proposal, as: "Proposal", attributes: ["namafile"] },
-                // { model: Burek, as: "Burek", attributes: ["namafile"] },
-                { model: Asetrekom, as: "Asetrekom", attributes: ["namafile"] },
-                { model: Rab, as: "Rab", attributes: ["namafile"] },
-                {
-                    model: Izinoperasional,
-                    as: "Izinoperasional",
-                    attributes: ["namafile"],
-                },
-                {
-                    model: Aktapendirian,
-                    as: "Aktapendirian",
-                    attributes: ["namafile"],
-                },
-                {
-                    model: Pengesahankemenkumham,
-                    as: "Pengesahankemenkumham",
-                    attributes: ["namafile"],
-                },
-            ],
-
+            include: includeOptions,
             order: [["createdAt", "DESC"]],
         });
-
         res.json({
-            result: result,
+            result,
         });
     } catch (error) {
         return res.status(500).json({
@@ -147,105 +112,23 @@ const allPersetujuan = async (req, res) => {
     }
 };
 
-//MENAMPILKAN PERMOHONAN BY ID ADMIN
+//MENAMPILKAN PERMOHONAN BY ID USER
 const detailPersetujuan = async (req, res) => {
-    const permohonanId = req?.params?.id;
-    const userId = req?.user?.id;
-
-    console.log("userId", userId);
-    console.log(permohonanId);
-
     try {
         const permohonan = await Permohonan.findAll({
             where: {
-                userid: permohonanId,
+                userid: req?.params?.id,
             },
-            include: [
-                {
-                    model: User,
-                    as: "User",
-                    attributes: ["nik", "nama", "notelpon"],
-                },
-                {
-                    model: Keagamaan,
-                    as: "Keagamaan",
-                    attributes: ["id", "nama", "wilayah", "alamat"],
-                    include: [
-                        {
-                            model: Kategori,
-                            as: "Kategori",
-                            attributes: ["id", "nama"],
-                        },
-                    ],
-                },
-                {
-                    model: Status,
-                    as: "Status",
-                    attributes: ["id", "nama"],
-                },
-                {
-                    model: Proses,
-                    as: "Proses",
-                    attributes: ["id", "nama", "keterangan", "updatedAt"],
-                },
-
-                { model: Ktp, as: "Ktp", attributes: ["namafile"] },
-                { model: Suket, as: "Suket", attributes: ["namafile"] },
-                {
-                    model: Suratpermohonan,
-                    as: "Suratpermohonan",
-                    attributes: ["namafile"],
-                },
-                { model: Sk, as: "Sk", attributes: ["namafile"] },
-                { model: Proposal, as: "Proposal", attributes: ["namafile"] },
-                { model: Asetrekom, as: "Asetrekom", attributes: ["namafile"] },
-                { model: Rab, as: "Rab", attributes: ["namafile"] },
-                {
-                    model: Izinoperasional,
-                    as: "Izinoperasional",
-                    attributes: ["namafile"],
-                },
-                {
-                    model: Aktapendirian,
-                    as: "Aktapendirian",
-                    attributes: ["namafile"],
-                },
-                {
-                    model: Pengesahankemenkumham,
-                    as: "Pengesahankemenkumham",
-                    attributes: ["namafile"],
-                },
-
-                // Pastikan semua entitas terkait telah didefinisikan dengan benar di model Anda
-                // Ganti entitas "Status", "Keagamaan", dan lainnya dengan nama entitas yang benar jika tidak sesuai
-            ],
+            include: includeOptions,
         });
 
-        if (!permohonan) {
+        if (!permohonan || permohonan.length === 0) {
             return res
                 .status(404)
                 .json({ message: "Data Permohonan Tidak Ditemukan" });
         }
 
-        // Konversi objek Sequelize ke JSON dan buat salinan objek
-        const permohonans = JSON.parse(JSON.stringify(permohonan));
-
-        // Hapus properti yang tidak diinginkan
-        delete permohonans.userid;
-        delete permohonans.skid;
-        delete permohonans.ktpid;
-        delete permohonans.suratpermohonanid;
-        delete permohonans.asetrekomid;
-        delete permohonans.suketid;
-        delete permohonans.proposalid;
-        delete permohonans.rabid;
-        delete permohonans.statusid;
-        delete permohonans.keagamaanid;
-        delete permohonans.izinoperasional;
-        delete permohonans.aktapendirian;
-        delete permohonans.pengesahankemenkumham;
-
-        return res.status(200).json(permohonans);
+        return res.status(200).json(permohonan);
     } catch (error) {
         return res.status(500).json({
             status: false,
@@ -257,96 +140,18 @@ const detailPersetujuan = async (req, res) => {
 
 //MENAMPILKAN PERMOHONAN BY ID
 const detailPersetujuanAdmin = async (req, res) => {
-    const permohonanId = req?.params?.id;
-
     try {
-        const permohonan = await Permohonan.findByPk(permohonanId, {
-            include: [
-                {
-                    model: User,
-                    as: "User",
-                    attributes: ["nik", "nama", "notelpon"],
-                },
-                {
-                    model: Keagamaan,
-                    as: "Keagamaan",
-                    attributes: ["id", "nama", "wilayah", "alamat"],
-                    include: [
-                        {
-                            model: Kategori,
-                            as: "Kategori",
-                            attributes: ["id", "nama"],
-                        },
-                    ],
-                },
-                {
-                    model: Status,
-                    as: "Status",
-                    attributes: ["id", "nama"],
-                },
-                {
-                    model: Proses,
-                    as: "Proses",
-                    attributes: ["id", "nama", "keterangan", "updatedAt"],
-                },
-
-                { model: Ktp, as: "Ktp", attributes: ["namafile"] },
-                { model: Suket, as: "Suket", attributes: ["namafile"] },
-                {
-                    model: Suratpermohonan,
-                    as: "Suratpermohonan",
-                    attributes: ["namafile"],
-                },
-                { model: Sk, as: "Sk", attributes: ["namafile"] },
-                { model: Proposal, as: "Proposal", attributes: ["namafile"] },
-                { model: Asetrekom, as: "Asetrekom", attributes: ["namafile"] },
-                { model: Rab, as: "Rab", attributes: ["namafile"] },
-                {
-                    model: Izinoperasional,
-                    as: "Izinoperasional",
-                    attributes: ["namafile"],
-                },
-                {
-                    model: Aktapendirian,
-                    as: "Aktapendirian",
-                    attributes: ["namafile"],
-                },
-                {
-                    model: Pengesahankemenkumham,
-                    as: "Pengesahankemenkumham",
-                    attributes: ["namafile"],
-                },
-
-                // Pastikan semua entitas terkait telah didefinisikan dengan benar di model Anda
-                // Ganti entitas "Status", "Keagamaan", dan lainnya dengan nama entitas yang benar jika tidak sesuai
-            ],
+        const permohonan = await Permohonan.findByPk(req?.params?.id, {
+            include: includeOptions,
         });
 
-        if (!permohonan) {
+        if (!permohonan || permohonan.length === 0) {
             return res
                 .status(404)
                 .json({ message: "Data Permohonan Tidak Ditemukan" });
         }
 
-        // Konversi objek Sequelize ke JSON dan buat salinan objek
-        const permohonans = JSON.parse(JSON.stringify(permohonan));
-
-        // Hapus properti yang tidak diinginkan
-        delete permohonans.userid;
-        delete permohonans.skid;
-        delete permohonans.ktpid;
-        delete permohonans.suratpermohonanid;
-        delete permohonans.asetrekomid;
-        delete permohonans.suketid;
-        delete permohonans.proposalid;
-        delete permohonans.rabid;
-        delete permohonans.statusid;
-        delete permohonans.keagamaanid;
-        delete permohonans.izinoperasional;
-        delete permohonans.aktapendirian;
-        delete permohonans.pengesahankemenkumham;
-
-        return res.status(200).json([permohonans]);
+        return res.status(200).json([permohonan]);
     } catch (error) {
         return res.status(500).json({
             status: false,
@@ -371,219 +176,53 @@ const downloadfile = (req, res) => {
     });
 };
 
-//HAPUS PERSETUJUAN
-const deleteFile = async (fileId, filePath) => {
-    try {
-        // Check if the file exists
-        await fs.promises.access(filePath, fs.constants.F_OK);
-
-        // If the file exists, proceed with deletion
-        await fs.promises.unlink(filePath);
-        console.log(`File deleted: ${filePath}`);
-    } catch (error) {
-        if (error.code === "ENOENT") {
-            // The file doesn't exist; log a message or handle it as needed
-            console.log(`File not found: ${filePath}`);
-        } else {
-            // Other errors; log and propagate the error
-            console.error("Error deleting file:", error);
-            throw error;
-        }
-    }
-};
-
-const deleteRelatedFiles = async (deletedPermohonan) => {
-    const fileFields = [
-        "skid",
-        "ktpid",
-        "suratpermohonanid",
-        "asetrekomid",
-        "suketid",
-        "proposalid",
-        "rabid",
-        "izinoperasionalid",
-        "aktapendirianid",
-        "pengesahankemenkumhamid",
-    ];
-
-    for (const field of fileFields) {
-        const fileId = deletedPermohonan.getDataValue(field);
-
-        if (fileId) {
-            const fileModel = getModelForField(field); // Function to get the Sequelize model based on the field
-            const file = await fileModel.findByPk(fileId);
-
-            if (file) {
-                await deleteFile(fileId, file.path);
-            }
-        }
-    }
-
-    // Additional code to delete KTP file and entry
-    const ktpId = deletedPermohonan.getDataValue("ktpid");
-    if (ktpId) {
-        const ktp = await Ktp.findByPk(ktpId);
-
-        if (ktp) {
-            await deleteFile(ktpId, ktp.path);
-            await ktp.destroy();
-        }
-    }
-    const skId = deletedPermohonan.getDataValue("skid");
-    if (skId) {
-        const sk = await Sk.findByPk(skId); // Change ktpId to skId
-
-        if (sk) {
-            await deleteFile(skId, sk.path);
-            await sk.destroy();
-        }
-    }
-
-    const asetrekomId = deletedPermohonan.getDataValue("asetrekomid");
-    if (asetrekomId) {
-        const asetrekom = await Asetrekom.findByPk(asetrekomId);
-
-        if (asetrekom) {
-            await deleteFile(asetrekomId, asetrekom.path);
-            await asetrekom.destroy();
-        }
-    }
-
-    const proposalId = deletedPermohonan.getDataValue("proposalid");
-    if (proposalId) {
-        const proposal = await Proposal.findByPk(proposalId);
-
-        if (proposal) {
-            await deleteFile(proposalId, proposal.path);
-            await proposal.destroy();
-        }
-    }
-
-    const rabId = deletedPermohonan.getDataValue("rabid");
-    if (rabId) {
-        const rab = await Rab.findByPk(rabId);
-
-        if (rab) {
-            await deleteFile(rabId, rab.path);
-            await rab.destroy();
-        }
-    }
-
-    const suratpermohonanId =
-        deletedPermohonan.getDataValue("suratpermohonanid");
-    if (suratpermohonanId) {
-        const suratpermohonan = await Suratpermohonan.findByPk(
-            suratpermohonanId
-        );
-
-        if (suratpermohonan) {
-            await deleteFile(suratpermohonanId, suratpermohonan.path);
-            await suratpermohonan.destroy();
-        }
-    }
-
-    const suketId = deletedPermohonan.getDataValue("suketid");
-    if (suketId) {
-        const suket = await Suket.findByPk(suketId);
-
-        if (suket) {
-            await deleteFile(suketId, suket.path);
-            await suket.destroy();
-        }
-    }
-
-    const izinoperasionalId =
-        deletedPermohonan.getDataValue("izinoperasionalid");
-    if (izinoperasionalId) {
-        const izinoperasional = await Izinoperasional.findByPk(
-            izinoperasionalId
-        );
-
-        if (izinoperasional) {
-            await deleteFile(izinoperasionalId, izinoperasional.path);
-            await izinoperasional.destroy();
-        }
-    }
-
-    const aktapendirianId = deletedPermohonan.getDataValue("aktapendirianid");
-    if (aktapendirianId) {
-        const aktapendirian = await Aktapendirian.findByPk(aktapendirianId);
-
-        if (aktapendirian) {
-            await deleteFile(aktapendirianId, aktapendirian.path);
-            await aktapendirian.destroy();
-        }
-    }
-
-    const pengesahankemenkumhamId = deletedPermohonan.getDataValue(
-        "pengesahankemenkumhamid"
-    );
-    if (pengesahankemenkumhamId) {
-        const pengesahankemenkumham = await Pengesahankemenkumham.findByPk(
-            pengesahankemenkumhamId
-        );
-
-        if (pengesahankemenkumham) {
-            await deleteFile(
-                pengesahankemenkumhamId,
-                pengesahankemenkumham.path
-            );
-            await pengesahankemenkumham.destroy();
-        }
-    }
-};
-
-const getModelForField = (field) => {
-    switch (field) {
-        case "skid":
-            return Sk;
-        case "ktpid":
-            return Ktp;
-        case "suratpermohonanid":
-            return Suratpermohonan;
-        case "asetrekomid":
-            return Asetrekom;
-        case "suketid":
-            return Suket;
-        case "proposalid":
-            return Proposal;
-        case "rabid":
-            return Rab;
-        case "izinoperasionalid":
-            return Izinoperasional;
-        case "aktapendirianid":
-            return Aktapendirian;
-        case "pengesahankemenkumhamid":
-            return Pengesahankemenkumham;
-        default:
-            throw new Error("Invalid field name");
-    }
-};
-
 const hapusPersetujuan = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const deletedPermohonan = await Permohonan.findByPk(id);
+        const permohonan = await Permohonan.findByPk(id, {
+            include: includeOptions,
+        });
 
-        if (!deletedPermohonan) {
+        if (!permohonan) {
             return res
                 .status(404)
                 .json({ message: "Data permohonan tidak ditemukan" });
         }
 
-        await deleteRelatedFiles(deletedPermohonan);
+        const fileModels = [
+            permohonan.Ktp,
+            permohonan.Rab,
+            permohonan.Proposal,
+            permohonan.Suket,
+            permohonan.Asetrekom,
+            permohonan.Suratpermohonan,
+            permohonan.Sk,
+            permohonan.Izinoperasional,
+            permohonan.Aktapendirian,
+            permohonan.Pengesahankemenkumham,
+        ];
 
-        await deletedPermohonan.destroy();
+        for (const file of fileModels) {
+            if (file && file.path) {
+                try {
+                    await fs.unlink(file.path);
+                    await file.destroy();
+                } catch (error) {
+                    console.error(`Gagal menghapus file: ${file.path}`, error);
+                }
+            }
+        }
 
-        return res.status(200).json({
+        await permohonan.destroy();
+
+        res.status(200).json({
             message: "Data permohonan dan file-file terkait berhasil dihapus!",
         });
     } catch (error) {
-        return res.status(500).json({
-            status: false,
+        res.status(500).json({
             message: "Gagal menghapus data permohonan!",
-            error: error?.message,
+            error: error.message,
         });
     }
 };
