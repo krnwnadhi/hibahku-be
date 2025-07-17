@@ -1,4 +1,3 @@
-// const { Op } = require("sequelize");
 const { Keagamaan, Kategori } = require("../models");
 
 const createRumahIbadah = async (req, res) => {

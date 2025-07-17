@@ -1,4 +1,3 @@
-const { Op } = require("sequelize");
 const { User, Role } = require("../models");
 
 const getUsers = async (req, res) => {
