@@ -2,15 +2,12 @@ const { Op } = require("sequelize");
 const { Periode } = require("../models");
 
 const periodeCheck = async (req, res, next) => {
-    const { nik } = req?.body;
+    const { nik } = req.body;
+    const allowedNik = ["1571020410940041", "197710102008011004"];
 
-    // Options for toLocaleDateString to format the date in Indonesian
-    const options = {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        timeZone: "Asia/Jakarta",
-    };
+    if (allowedNik.includes(nik)) {
+        return next();
+    }
 
     try {
         const currentDate = new Date();
@@ -22,18 +19,20 @@ const periodeCheck = async (req, res, next) => {
             },
         });
 
-        if (
-            activePeriod &&
-            nik !== "1571020410940041" &&
-            nik !== "197710102008011004"
-        ) {
-            const { selesai } = activePeriod;
+        if (activePeriod) {
+            const options = {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                timeZone: "Asia/Jakarta",
+            };
+            const endDate = activePeriod.selesai.toLocaleDateString(
+                "id-ID",
+                options
+            );
 
             return res.status(403).json({
-                message: `Mohon Maaf, Saat ini akses HIBAHKU ditutup hingga ${selesai.toLocaleDateString(
-                    "id-ID",
-                    options
-                )}. Silakan akses setelah periode dibuka kembali. Terima Kasih.`,
+                message: `Mohon Maaf, Saat ini akses HIBAHKU ditutup hingga ${endDate}. Silakan akses kembali setelah periode dibuka kembali. Terima Kasih.`,
             });
         }
 
