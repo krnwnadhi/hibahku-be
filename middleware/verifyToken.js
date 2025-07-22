@@ -1,42 +1,33 @@
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
-// const config = require("../config/config.json");
-// const secretKey = config.development.secretKey;
-
-const dotenv = require("dotenv");
-dotenv.config();
-
-const secretKey = process.env.SECRET_KEY;
 
 const verifyToken = async (req, res, next) => {
-    const token = req?.headers?.authorization;
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({
             message: "Anda Harus login!",
         });
     }
 
-    const jwtToken = token.split(" ").pop();
+    const token = authHeader.split(" ")[1];
 
     try {
-        const data = jwt.verify(jwtToken, secretKey);
-
-        const user = await User.findByPk(data.userId); // Ensure correct user identifier
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const user = await User.findByPk(decoded.userId);
 
         if (!user) {
             return res.status(404).json({
-                message: "User Tidak ditemukan!",
+                message: "User tidak ditemukan!",
             });
         }
-        req.user = user;
 
+        req.user = user;
         next();
     } catch (error) {
         return res.status(401).json({
-            status: false,
-            message: "Not Authorized!",
-            error: error?.message,
+            message: "Sesi tidak valid!",
+            error: error.message,
         });
     }
 };
