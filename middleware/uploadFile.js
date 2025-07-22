@@ -1,21 +1,20 @@
 const util = require("util");
 const multer = require("multer");
 const path = require("path");
+
 const maxSize = 5 * 1024 * 1024; //5MB
 
-let storage = multer.diskStorage({
+const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, __basedir + "/public/uploads");
+        cb(null, path.join(__basedir, "/public/uploads"));
     },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        console.log(uniqueSuffix);
+    filename: (req, file, cb) => {
+        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
         cb(
             null,
-            file.fieldname +
-                "-" +
-                uniqueSuffix +
-                path.extname(file.originalname)
+            `${file.fieldname}-${uniqueSuffix}${path.extname(
+                file.originalname
+            )}`
         );
     },
 });
