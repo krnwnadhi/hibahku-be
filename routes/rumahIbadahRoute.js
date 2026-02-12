@@ -9,14 +9,14 @@ rumahIbadah.get(
     "/list",
     // verifyToken,
     // roleCheck,
-    rumahIbadahController.listRumahIbadah
+    rumahIbadahController.listRumahIbadah,
 );
 
 rumahIbadah.post(
     "/create",
     // roleCheck,
     verifyToken,
-    rumahIbadahController.createRumahIbadah
+    rumahIbadahController.createRumahIbadah,
 );
 
 module.exports = rumahIbadah;

@@ -51,7 +51,7 @@ module.exports = {
                     keterangan: "DITOLAK",
                 },
             ],
-            {}
+            {},
         );
     },
 

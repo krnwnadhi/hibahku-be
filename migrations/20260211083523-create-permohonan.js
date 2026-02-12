@@ -60,6 +60,21 @@ module.exports = {
             pengesahankemenkumhamid: {
                 type: Sequelize.INTEGER,
             },
+            npwpid: {
+                type: Sequelize.INTEGER,
+            },
+            suratdomisiliid: {
+                type: Sequelize.INTEGER,
+            },
+            suratpernyataankeabsahanid: {
+                type: Sequelize.INTEGER,
+            },
+            suratpernyataantidakhibahid: {
+                type: Sequelize.INTEGER,
+            },
+            suratrekomkemenagid: {
+                type: Sequelize.INTEGER,
+            },
             createdAt: {
                 type: Sequelize.DATE,
                 defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),

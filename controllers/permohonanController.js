@@ -11,6 +11,7 @@ const {
     Izinoperasional,
     Aktapendirian,
     Pengesahankemenkumham,
+    Npwp,
 } = require("../models");
 const fs = require("fs").promises; // Use the promise-based version of fs
 
@@ -66,7 +67,7 @@ const permohonan = async (req, res) => {
             // 1. Dapatkan tahun saat ini dan tahun permohonan terakhir secara langsung.
             const currentYear = new Date().getFullYear();
             const lastSubmissionYear = new Date(
-                existingPermohonan.createdAt
+                existingPermohonan.createdAt,
             ).getFullYear();
 
             // 2. Hitung tahun di mana pengajuan berikutnya diizinkan (tahun terakhir + 2).

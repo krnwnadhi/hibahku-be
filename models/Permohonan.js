@@ -70,6 +70,31 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "pengesahankemenkumhamid",
                 as: "Pengesahankemenkumham",
             });
+
+            Permohonan.belongsTo(models.Npwp, {
+                foreignKey: "npwpid",
+                as: "Npwp",
+            });
+
+            Permohonan.belongsTo(models.Suratdomisili, {
+                foreignKey: "suratdomisiliid",
+                as: "Suratdomisili",
+            });
+
+            Permohonan.belongsTo(models.Suratpernyataankeabsahan, {
+                foreignKey: "suratpernyataankeabsahanid",
+                as: "Suratpernyataankeabsahan",
+            });
+
+            Permohonan.belongsTo(models.Suratpernyataantidakhibah, {
+                foreignKey: "suratpernyataantidakhibahid",
+                as: "Suratpernyataantidakhibah",
+            });
+
+            Permohonan.belongsTo(models.Suratrekomkemenag, {
+                foreignKey: "suratrekomkemenagid",
+                as: "Suratrekomkemenag",
+            });
         }
     }
     Permohonan.init(
@@ -85,19 +110,23 @@ module.exports = (sequelize, DataTypes) => {
             suratpermohonanid: DataTypes.INTEGER,
             asetrekomid: DataTypes.INTEGER,
             suketid: DataTypes.INTEGER,
-            // burekid: DataTypes.INTEGER,
             proposalid: DataTypes.INTEGER,
             rabid: DataTypes.INTEGER,
             aktapendirianid: DataTypes.INTEGER,
             izinoperasionalid: DataTypes.INTEGER,
             pengesahankemenkumhamid: DataTypes.INTEGER,
+            npwpid: DataTypes.INTEGER,
+            suratdomisiliid: DataTypes.INTEGER,
+            suratpernyataankeabsahanid: DataTypes.INTEGER,
+            suratpernyataantidakhibahid: DataTypes.INTEGER,
+            suratrekomkemenagid: DataTypes.INTEGER,
         },
         {
             sequelize,
             modelName: "Permohonan",
             tableName: "permohonans",
             timestamps: true,
-        }
+        },
     );
     return Permohonan;
 };
