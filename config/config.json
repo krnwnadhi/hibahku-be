@@ -5,7 +5,8 @@
         "database": "hibahku",
         "host": "127.0.0.1",
         "dialect": "mysql",
-        "secretKey": "hibahku-key"
+        "secretKey": "hibahku-key",
+        "timezone": "+07:00"
     },
     "test": {
         "username": "root",
@@ -13,7 +14,8 @@
         "database": "database_test",
         "host": "127.0.0.1",
         "dialect": "mysql",
-        "secretKey": "hibahku-key"
+        "secretKey": "hibahku-key",
+        "timezone": "+07:00"
     },
     "production": {
         "username": "root",
@@ -21,6 +23,7 @@
         "database": "database_production",
         "host": "127.0.0.1",
         "dialect": "mysql",
-        "secretKey": "hibahku-key"
+        "secretKey": "hibahku-key",
+        "timezone": "+07:00"
     }
 }
