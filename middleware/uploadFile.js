@@ -13,8 +13,8 @@ const storage = multer.diskStorage({
         cb(
             null,
             `${file.fieldname}-${uniqueSuffix}${path.extname(
-                file.originalname
-            )}`
+                file.originalname,
+            )}`,
         );
     },
 });
@@ -43,6 +43,11 @@ let uploadFile = multer({
     { name: "file_izinoperasional" },
     { name: "file_aktapendirian" },
     { name: "file_pengesahankemenkumham" },
+    { name: "file_npwp" },
+    { name: "file_suratdomisili" },
+    { name: "file_suratpernyataankeabsahan" },
+    { name: "file_suratpernyataantidakhibah" },
+    { name: "file_suratrekomkemenag" },
 ]);
 
 let uploadFileMiddleware = util.promisify(uploadFile);

@@ -12,6 +12,10 @@ const {
     Aktapendirian,
     Pengesahankemenkumham,
     Npwp,
+    Suratdomisili,
+    Suratpernyataankeabsahan,
+    Suratpernyataantidakhibah,
+    Suratrekomkemenag,
 } = require("../models");
 const fs = require("fs").promises; // Use the promise-based version of fs
 
@@ -95,6 +99,11 @@ const permohonan = async (req, res) => {
             izinoperasional,
             aktapendirian,
             pengesahankemenkumham,
+            npwp,
+            suratdomisili,
+            suratpernyataankeabsahan,
+            suratpernyataantidakhibah,
+            suratrekomkemenag,
         ] = await Promise.all([
             saveFile(files.file_ktp, Ktp),
             saveFile(files.file_rab, Rab),
@@ -106,6 +115,17 @@ const permohonan = async (req, res) => {
             saveFile(files.file_izinoperasional, Izinoperasional),
             saveFile(files.file_aktapendirian, Aktapendirian),
             saveFile(files.file_pengesahankemenkumham, Pengesahankemenkumham),
+            saveFile(files.file_npwp, Npwp),
+            saveFile(files.file_suratdomisili, Suratdomisili),
+            saveFile(
+                files.file_suratpernyataankeabsahan,
+                Suratpernyataankeabsahan,
+            ),
+            saveFile(
+                files.file_suratpernyataantidakhibah,
+                Suratpernyataantidakhibah,
+            ),
+            saveFile(files.file_suratrekomkemenag, Suratrekomkemenag),
         ]);
 
         const permohonanData = await Permohonan.create({
@@ -120,6 +140,11 @@ const permohonan = async (req, res) => {
             izinoperasionalid: izinoperasional?.id,
             aktapendirianid: aktapendirian?.id,
             pengesahankemenkumhamid: pengesahankemenkumham?.id,
+            npwpid: npwp?.id,
+            suratdomisiliid: suratdomisili?.id,
+            suratpernyataankeabsahanid: suratpernyataankeabsahan?.id,
+            suratpernyataantidakhibahid: suratpernyataantidakhibah?.id,
+            suratrekomkemenagid: suratrekomkemenag?.id,
             statusid: 3,
             prosesid: 10,
             userid: user.nik,
