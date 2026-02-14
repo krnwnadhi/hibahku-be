@@ -104,6 +104,7 @@ const permohonan = async (req, res) => {
             suratpernyataankeabsahan,
             suratpernyataantidakhibah,
             suratrekomkemenag,
+            norekening,
         ] = await Promise.all([
             saveFile(files.file_ktp, Ktp),
             saveFile(files.file_rab, Rab),
@@ -126,6 +127,7 @@ const permohonan = async (req, res) => {
                 Suratpernyataantidakhibah,
             ),
             saveFile(files.file_suratrekomkemenag, Suratrekomkemenag),
+            saveFile(files.file_file_norekening, Norekening),
         ]);
 
         const permohonanData = await Permohonan.create({
@@ -145,6 +147,7 @@ const permohonan = async (req, res) => {
             suratpernyataankeabsahanid: suratpernyataankeabsahan?.id,
             suratpernyataantidakhibahid: suratpernyataantidakhibah?.id,
             suratrekomkemenagid: suratrekomkemenag?.id,
+            norekeningid: norekening?.id,
             statusid: 3,
             prosesid: 10,
             userid: user.nik,

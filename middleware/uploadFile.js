@@ -48,6 +48,7 @@ let uploadFile = multer({
     { name: "file_suratpernyataankeabsahan" },
     { name: "file_suratpernyataantidakhibah" },
     { name: "file_suratrekomkemenag" },
+    { name: "file_norekening" },
 ]);
 
 let uploadFileMiddleware = util.promisify(uploadFile);
