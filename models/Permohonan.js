@@ -95,6 +95,11 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "suratrekomkemenagid",
                 as: "Suratrekomkemenag",
             });
+
+            Permohonan.belongsTo(models.Norekening, {
+                foreignKey: "norekeningid",
+                as: "Norekening",
+            });
         }
     }
     Permohonan.init(
@@ -120,6 +125,7 @@ module.exports = (sequelize, DataTypes) => {
             suratpernyataankeabsahanid: DataTypes.INTEGER,
             suratpernyataantidakhibahid: DataTypes.INTEGER,
             suratrekomkemenagid: DataTypes.INTEGER,
+            norekeningid: DataTypes.INTEGER,
         },
         {
             sequelize,
