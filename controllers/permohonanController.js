@@ -16,6 +16,7 @@ const {
     Suratpernyataankeabsahan,
     Suratpernyataantidakhibah,
     Suratrekomkemenag,
+    Norekening,
 } = require("../models");
 const fs = require("fs").promises; // Use the promise-based version of fs
 
@@ -127,7 +128,7 @@ const permohonan = async (req, res) => {
                 Suratpernyataantidakhibah,
             ),
             saveFile(files.file_suratrekomkemenag, Suratrekomkemenag),
-            saveFile(files.file_file_norekening, Norekening),
+            saveFile(files.file_norekening, Norekening),
         ]);
 
         const permohonanData = await Permohonan.create({
