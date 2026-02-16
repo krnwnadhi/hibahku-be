@@ -10,41 +10,48 @@ persetujuanRoute.get(
     "/list",
     verifyToken,
     // roleCheck,
-    persetujuanController.allPersetujuan
+    persetujuanController.allPersetujuan,
 );
 
 persetujuanRoute.get(
     "/detail/:id",
     verifyToken,
     roleCheck,
-    persetujuanController.detailPersetujuanAdmin
+    persetujuanController.detailPersetujuanAdmin,
 );
 
 persetujuanRoute.get(
     "/detail/user/:id",
     verifyToken,
-    persetujuanController.detailPersetujuan
+    persetujuanController.detailPersetujuan,
 );
 
 persetujuanRoute.post(
     "/:id",
     verifyToken,
     roleCheck,
-    persetujuanController.approvePersetujuan
+    persetujuanController.approvePersetujuan,
+);
+
+persetujuanRoute.get(
+    "/preview/:fileName",
+    // verifyToken,
+    // roleCheck,
+    persetujuanController.previewFile,
 );
 
 persetujuanRoute.get(
     "/download/:fileName",
     // verifyToken,
     // roleCheck,
-    persetujuanController.downloadfile
+    persetujuanController.downloadfile,
 );
 
 persetujuanRoute.delete(
     "/:id",
     verifyToken,
     roleCheck,
-    persetujuanController.hapusPersetujuan
+    persetujuanController.hapusPersetujuan,
 );
 
 module.exports = persetujuanRoute;

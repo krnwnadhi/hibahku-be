@@ -15,9 +15,18 @@ const {
     Izinoperasional,
     Aktapendirian,
     Pengesahankemenkumham,
+    Norekening,
+    Npwp,
+    Suratdomisili,
+    Suratpernyataankeabsahan,
+    Suratpernyataantidakhibah,
+    Suratrekomkemenag,
 } = require("../models");
 
-const fs = require("fs").promises; // Module untuk menghapus file
+// const fs = require("fs").promises; // Module untuk menghapus file
+const fs = require("fs"); // Module untuk menghapus file
+const path = require("path");
+const mime = require("mime-types");
 
 const includeOptions = [
     { model: User, as: "User", attributes: ["nama", "notelpon", "nik"] },
@@ -47,6 +56,36 @@ const includeOptions = [
     {
         model: Pengesahankemenkumham,
         as: "Pengesahankemenkumham",
+        attributes: ["namafile"],
+    },
+    {
+        model: Norekening,
+        as: "Norekening",
+        attributes: ["namafile"],
+    },
+    {
+        model: Suratdomisili,
+        as: "Suratdomisili",
+        attributes: ["namafile"],
+    },
+    {
+        model: Npwp,
+        as: "Npwp",
+        attributes: ["namafile"],
+    },
+    {
+        model: Suratpernyataankeabsahan,
+        as: "Suratpernyataankeabsahan",
+        attributes: ["namafile"],
+    },
+    {
+        model: Suratpernyataantidakhibah,
+        as: "Suratpernyataantidakhibah",
+        attributes: ["namafile"],
+    },
+    {
+        model: Suratrekomkemenag,
+        as: "Suratrekomkemenag",
         attributes: ["namafile"],
     },
 ];
@@ -161,17 +200,58 @@ const detailPersetujuanAdmin = async (req, res) => {
     }
 };
 
-//DOWNLOAD FILE
-const downloadfile = (req, res) => {
-    const { fileName } = req?.params;
-    const directoryPath = "public/uploads/"; // Sesuaikan dengan direktori penyimpanan Anda
+// --- PREVIEW FILE ---
+const previewFile = (req, res) => {
+    // 1. Ambil fileName sesuai dengan nama di Route (:fileName)
+    const { fileName } = req.params;
 
-    res.download(directoryPath + fileName, fileName, (err) => {
+    // 2. Gunakan path absolut dari akar project (CWD)
+    // Pastikan folder adalah 'public/uploads/' (sesuaikan jika folder Anda berbeda)
+    const filePath = path.join(process.cwd(), "public", "uploads", fileName);
+
+    // DEBUG: Cek di terminal backend apakah path ini sudah benar
+    console.log("Mencari file di:", filePath);
+
+    // 3. Cek fisik file
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({
+            message: "File tidak ditemukan di server",
+            debugPath: filePath, // Hapus ini jika sudah masuk tahap produksi
+        });
+    }
+
+    // 4. Tentukan MIME Type
+    const contentType = mime.lookup(filePath) || "application/pdf";
+
+    // 5. Bersihkan header lama dan set header baru
+    res.setHeader("Content-Type", contentType);
+    res.setHeader("Content-Disposition", "inline");
+
+    // 6. Kirim file
+    res.sendFile(filePath, (err) => {
         if (err) {
-            res.status(500).send({
-                status: false,
-                message: "Gagal mendownload file!" + err,
-            });
+            console.error("Error saat kirim file:", err);
+            if (!res.headersSent) {
+                res.status(500).json({ message: "Gagal memproses preview" });
+            }
+        }
+    });
+};
+
+// --- DOWNLOAD FILE ---
+const downloadfile = (req, res) => {
+    const { fileName } = req.params;
+    // Gunakan path.resolve juga di sini
+    const filePath = path.resolve("public/uploads", fileName);
+
+    res.download(filePath, fileName, (err) => {
+        if (err) {
+            if (!res.headersSent) {
+                res.status(500).send({
+                    status: false,
+                    message: "Gagal mendownload file: " + err.message,
+                });
+            }
         }
     });
 };
@@ -201,6 +281,12 @@ const hapusPersetujuan = async (req, res) => {
             permohonan.Izinoperasional,
             permohonan.Aktapendirian,
             permohonan.Pengesahankemenkumham,
+            permohonan.Norekening,
+            permohonan.Npwp,
+            permohonan.Suratdomisili,
+            permohonan.Suratpernyataankeabsahan,
+            permohonan.Suratpernyataantidakhibah,
+            permohonan.Suratrekomkemenag,
         ];
 
         for (const file of fileModels) {
@@ -234,4 +320,5 @@ module.exports = {
     detailPersetujuan,
     hapusPersetujuan,
     downloadfile,
+    previewFile,
 };

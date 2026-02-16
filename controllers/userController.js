@@ -56,7 +56,40 @@ const getUsersById = async (req, res) => {
     }
 };
 
+// --- DELETE ---
+const deleteUser = async (req, res) => {
+    const { id } = req?.params;
+    const adminId = req?.user?.id;
+
+    try {
+        if (parseInt(id) === adminId) {
+            return res.status(400).json({
+                message: "Tidak diperbolehkan menghapus akun admin!",
+            });
+        }
+
+        const deleted = await User.destroy({
+            where: { id: id },
+        });
+
+        if (!deleted)
+            return res.status(404).json({ message: "User tidak ditemukan" });
+
+        res.json({
+            success: true,
+            message: `User dengan id = ${id} berhasil dihapus`,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Gagal menghapus User!",
+            error: error.message,
+        });
+    }
+};
+
 module.exports = {
     getUsersById,
     getUsers,
+    deleteUser,
 };

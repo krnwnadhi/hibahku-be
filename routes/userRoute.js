@@ -5,13 +5,25 @@ const { roleCheck } = require("../middleware/roleCheck");
 
 const userRoute = express.Router(); // Use express.Router() to define a router
 
-userRoute.get("/getusers", verifyToken, roleCheck, userController.getUsers);
+userRoute.get(
+    "/getusers",
+    // verifyToken,
+    // roleCheck,
+    userController.getUsers,
+);
 
 userRoute.get(
     "/getusers/:id",
     verifyToken,
     roleCheck,
-    userController.getUsersById
+    userController.getUsersById,
+);
+
+userRoute.delete(
+    "/getusers/:id",
+    verifyToken,
+    roleCheck,
+    userController.deleteUser,
 );
 
 module.exports = userRoute;

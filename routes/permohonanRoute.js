@@ -75,7 +75,7 @@ permohonanRoute.post(
     "/uploads",
     uploadFileMiddleware,
     verifyToken,
-    permohonanController.permohonan
+    permohonanController.permohonan,
 );
 
 module.exports = permohonanRoute;
