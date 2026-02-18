@@ -7,7 +7,11 @@ const authRoute = express.Router();
 
 authRoute.post("/register", authController.register);
 
-authRoute.post("/login", periodeCheck, authController.login);
+authRoute.post(
+    "/login",
+    // periodeCheck,
+    authController.login,
+);
 
 authRoute.post("/logout", verifyToken, authController.logout);
 

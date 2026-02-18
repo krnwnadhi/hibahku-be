@@ -8,8 +8,8 @@ const cekStatusRumahIbadahRoute = express.Router();
 cekStatusRumahIbadahRoute.post(
     "/",
     verifyToken,
-    periodeCheck,
-    cekStatusRumahIbadah.cekStatus
+    // periodeCheck,
+    cekStatusRumahIbadah.cekStatus,
 );
 
 module.exports = cekStatusRumahIbadahRoute;
