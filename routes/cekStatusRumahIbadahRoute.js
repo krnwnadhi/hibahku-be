@@ -7,7 +7,7 @@ const cekStatusRumahIbadahRoute = express.Router();
 
 cekStatusRumahIbadahRoute.post(
     "/",
-    verifyToken,
+    // verifyToken,
     // periodeCheck,
     cekStatusRumahIbadah.cekStatus,
 );

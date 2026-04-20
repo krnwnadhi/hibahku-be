@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: "Suratrekomkemenag",
-            tableName: "Suratrekomkemenags",
+            tableName: "Suratrekomkemenags", //TODO -> suratrekomkemenags
             timestamps: true,
         },
     );

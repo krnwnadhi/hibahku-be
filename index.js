@@ -6,6 +6,11 @@ const app = express();
 
 const dotenv = require("dotenv");
 
+dotenv.config({
+    origin: true,
+    credentials: true,
+});
+
 // Routes dan middleware lainnya
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
@@ -17,15 +22,7 @@ const periodeRoute = require("./routes/periodeRoute");
 
 global.__basedir = __dirname;
 
-dotenv.config({
-    origin: true,
-    credentials: true,
-});
-
 const PORT = process.env.PORT;
-
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: true }));
 
 // Mengizinkan akses dari semua origin
 const corsOptions = {
@@ -35,22 +32,34 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }));
+
+// Penangkap error jika ada kiriman JSON yang rusak (seperti "test_data")
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+        console.error("Invalid JSON detected:", err.message);
+        return res.status(400).json({
+            status: false,
+            message:
+                "Format JSON tidak valid! Pastikan request body berupa JSON objek.",
+        });
+    }
+    next();
+});
+// --------------------------------
+
 app.get("/", (req, res) => {
-    res.json({ message: "HIBAHKU API v1.0.0.beta" });
+    res.json({ message: "HIBAHKU API v1.1.0.beta" });
 });
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
         "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
+        "Origin, X-Requested-With, Content-Type, Accept",
     );
     next();
-});
-
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send("Something broke!");
 });
 
 app.use("/api/v1/auth", authRoute);
@@ -60,6 +69,16 @@ app.use("/api/v1/rumah-ibadah", rumahIbadahRoute);
 app.use("/api/v1/permohonan", permohonanRoute);
 app.use("/api/v1/persetujuan", persetujuanRoute);
 app.use("/api/v1/periode", periodeRoute);
+
+//Error Handler Global
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        status: false,
+        message: "Something broke!",
+        error: err.message,
+    });
+});
 
 // Start your server
 app.listen(PORT, () => {
