@@ -13,144 +13,50 @@ permohonanRoute.use(bodyparser.json());
 permohonanRoute.use(bodyparser.urlencoded({ extended: true }));
 permohonanRoute.use(express.static("public"));
 
-// const deleteUploadedFiles = async (files) => {
-//     files.forEach(async (file) => {
-//         if (file && file.length > 0) {
-//             const filePath = file[0].path;
-//             try {
-//                 fs.unlinkSync(filePath); // Delete the file
-//             } catch (err) {
-//                 console.error("Error deleting file:", err);
-//             }
-//         }
-//     });
-// };
-
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, "public/uploads/"); // Set the directory for uploaded files
-//     },
-//     filename: function (req, file, cb) {
-//         const uniqueFileName =
-//             file.fieldname +
-//             "-" +
-//             Date.now() +
-//             "." +
-//             file.originalname.split(".").pop();
-//         cb(null, uniqueFileName); // Set the filename for the uploaded file
-//     },
-// });
-
-// const fileFilter = (req, file, cb) => {
-//     if (file.mimetype !== "application/pdf") {
-//         req.pdfUploadError = "Hanya upload file berekstensi PDF!";
-//         cb(null, false);
-//     } else {
-//         cb(null, true);
-//     }
-// };
-
-// const upload = multer({
-//     storage: storage,
-//     fileFilter: fileFilter,
-//     limits: {
-//         // fileSize: 1024 * 1024 * 5, // File size limit (5MB)
-//         fileSize: 1024 * 1024,
-//     },
-// }).fields([
-//     { name: "file_ktp" },
-//     { name: "file_rab" },
-//     { name: "file_proposal" },
-//     { name: "file_suket" },
-//     { name: "file_asetrekom" },
-//     { name: "file_suratpermohonan" },
-//     { name: "file_sk" },
-//     { name: "file_izinoperasional" },
-//     { name: "file_aktapendirian" },
-//     { name: "file_pengesahankemenkumham" },
-// ]);
-
-// Setting up the route to handle POST requests
-permohonanRoute.post(
-    "/uploads",
-    uploadFileMiddleware,
-    verifyToken,
-    permohonanController.permohonan,
-);
-
-module.exports = permohonanRoute;
-
 // // Setting up the route to handle POST requests
 // permohonanRoute.post(
 //     "/uploads",
-//     upload,
-//     // async (req, res, next) => {
-//     //   if (req.pdfUploadError) {
-//     //     return res.status(400).json({ message: req.pdfUploadError });
-//     //   }
-//     //   const ktpFiles = req.files["file_ktp"];
-//     //   const rabFiles = req.files["file_rab"];
-//     //   const suketFiles = req.files["file_suket"];
-//     //   const burekFiles = req.files["file_burek"];
-//     //   const proposalFiles = req.files["file_proposal"];
-//     //   const asetrekomFiles = req.files["file_asetrekom"];
-//     //   const suratpermohonanFiles = req.files["file_suratpermohonan"];
-//     //   const skFiles = req.files["file_sk"];
-
-//     //   if (
-//     //     !ktpFiles ||
-//     //     !rabFiles ||
-//     //     !suketFiles ||
-//     //     !burekFiles ||
-//     //     !skFiles ||
-//     //     !proposalFiles ||
-//     //     !asetrekomFiles ||
-//     //     !suratpermohonanFiles
-//     //   ) {
-//     //     return res.status(400).json({ message: "Wajib mengunggah file" });
-//     //   }
-
-//     //   const saveFile = async (file, Model) => {
-//     //     if (file && file.length > 0) {
-//     //       const fileData = new Model({
-//     //         namafile: file[0].filename,
-//     //         size: file[0].size,
-//     //         path: file[0].path,
-//     //       });
-//     //       await fileData.save();
-//     //     }
-//     //   };
-//     //   // ...
-
-//     //   try {
-//     //     const savedFiles = await Promise.all([
-//     //       saveFile(ktpFiles, Ktp),
-//     //       saveFile(rabFiles, Rab),
-//     //       saveFile(suketFiles, Suket),
-//     //       saveFile(burekFiles, Burek),
-//     //       saveFile(skFiles, Sk),
-//     //       saveFile(proposalFiles, Proposal),
-//     //       saveFile(suratpermohonanFiles, Suratpermohonan),
-//     //     ]);
-
-//     //     // Check if any of the savedFiles are null (indicating an error)
-
-//     //     return res.status(201).json({ message: "Files uploaded successfully" });
-//     //   } catch (error) {
-//     //     // If an error occurs during the database save, delete the uploaded files
-//     //     await deleteUploadedFiles([
-//     //       ktpFiles,
-//     //       rabFiles,
-//     //       suketFiles,
-//     //       burekFiles,
-//     //       skFiles,
-//     //       proposalFiles,
-//     //       suratpermohonanFiles,
-//     //       asetrekomFiles,
-//     //     ]);
-//     //     return res.status(500).json({ message: "Gagal menyimpan file" });
-//     //   }
-//     // },
+//     uploadFileMiddleware,
 //     verifyToken,
-//     permohonanController.permohonan
+//     permohonanController.permohonan,
 // );
+
+// module.exports = permohonanRoute;
+
+// --- ROUTES ---
+
+// CREATE: Mengajukan permohonan baru
+// Gunakan verifyToken di awal agar user tidak perlu upload file jika tidak terautentikasi
+permohonanRoute.post(
+    "/uploads",
+    verifyToken,
+    uploadFileMiddleware,
+    permohonanController.permohonan,
+);
+
+// READ (ALL): Mendapatkan semua permohonan milik user yang sedang login
+permohonanRoute.get("/", verifyToken, permohonanController.getAllPermohonan);
+
+// READ (ONE): Mendapatkan detail permohonan berdasarkan ID
+permohonanRoute.get(
+    "/:id",
+    verifyToken,
+    permohonanController.getPermohonanById,
+);
+
+// UPDATE: Mengubah data permohonan
+permohonanRoute.patch(
+    "/:id",
+    verifyToken,
+    uploadFileMiddleware,
+    permohonanController.updatePermohonan,
+);
+
+// DELETE: Menghapus permohonan
+permohonanRoute.delete(
+    "/:id",
+    verifyToken,
+    permohonanController.deletePermohonan,
+);
+
+module.exports = permohonanRoute;

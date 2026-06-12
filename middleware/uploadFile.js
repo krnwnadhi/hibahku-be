@@ -28,7 +28,7 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-let uploadFile = multer({
+let uploadFileMiddleware = multer({
     storage: storage,
     fileFilter: fileFilter,
     limits: { fileSize: maxSize },
@@ -51,5 +51,7 @@ let uploadFile = multer({
     { name: "file_norekening" },
 ]);
 
-let uploadFileMiddleware = util.promisify(uploadFile);
+// let uploadFileMiddleware = util.promisify(uploadFile);
+// module.exports = uploadFileMiddleware;
+
 module.exports = uploadFileMiddleware;
